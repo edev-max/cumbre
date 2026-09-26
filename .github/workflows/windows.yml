@@ -1,0 +1,55 @@
+# Arma el instalador de Cumbre para Windows (.exe y .msi) en cada cambio a main
+# y en cada etiqueta vX.Y.Z. El instalador queda en "Artifacts" de la ejecución;
+# con una etiqueta, además se publica un borrador de release.
+name: Instalador de Windows
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test
+      - run: npm run check
+      - run: npm run build
+
+  windows:
+    needs: pruebas
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with: { workspaces: './src-tauri -> target' }
+      - run: npm ci
+      - name: Pruebas de Rust (licencias)
+        working-directory: src-tauri
+        run: cargo test --lib
+      - name: Armar instalador
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          releaseName: 'Cumbre ${{ github.ref_name }}'
+          releaseDraft: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cumbre-windows
+          path: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ruta } from './lib/rutas.svelte';
-  import { buscarSub } from './lib/modulos';
+  import { buscarSub, puede } from './lib/modulos';
+  import { app } from './lib/estado.svelte';
   import CatalogoPagina from './paginas/CatalogoPagina.svelte';
   import { CATALOGOS } from './paginas/catalogos';
   import Pronto from './lib/marco/Pronto.svelte';
@@ -37,7 +38,9 @@
 </script>
 
 {#key clave}
-  {#if Comp}
+  {#if !puede(app.usuario.rol, ruta.partes[0] || 'inicio', sub)}
+    <div class="glass vacio" style="margin:26px"><p>Tu usuario no tiene acceso a esta sección.</p></div>
+  {:else if Comp}
     <Comp />
   {:else if CATALOGOS[sub]}
     <CatalogoPagina clave={sub} />

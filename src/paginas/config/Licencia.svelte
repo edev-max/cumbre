@@ -24,7 +24,10 @@
         {#if info.cliente}<p><b>{info.cliente}</b>{info.rif ? ' · ' + info.rif : ''}</p>{/if}
         {#if info.plan}<p class="dim">Plan {info.plan}</p>{/if}
         {#if info.vence}<p class="dim">Vence el {fecha(info.vence)}</p>{/if}
-        {#if info.estado === 'demo'}<p class="dim">En modo demostración puedes usar todo, pero la información es de prueba.</p>{/if}
+        {#if info.estado === 'demo' && info.equipo !== 'Sólo en la aplicación de escritorio'}<p class="dim">{info.dias_prueba ? `Te quedan ${info.dias_prueba} días de prueba con todas las funciones.` : 'La prueba terminó: Cumbre queda en sólo lectura hasta que lo actives.'}</p>
+        {:else if info.estado === 'demo'}<p class="dim">Esta es la versión de demostración en el navegador. La activación se hace en la aplicación de escritorio.</p>{/if}
+        {#if info.dias_gracia}<p class="warn">La licencia venció: te quedan {info.dias_gracia} días de gracia para renovarla.</p>{/if}
+        {#if info.motivo}<p class="bad">{info.motivo}</p>{/if}
       </div>
       <div class="glass card stack">
         <span class="mute">Código de este equipo</span>

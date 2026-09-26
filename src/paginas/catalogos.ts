@@ -146,7 +146,7 @@ export const CATALOGOS: Record<string, { titulo: string; desc: string; conf: Con
     }
   },
   usuarios: {
-    titulo: 'Usuarios', desc: 'Quién usa Cumbre en este equipo. El cajero sólo ve el punto de venta.',
+    titulo: 'Usuarios', desc: 'Quién usa Cumbre en este equipo y qué ve cada rol. Cajero: caja, notas, clientes y cobranza. Almacén: inventario, recepciones y despachos.',
     conf: {
       tabla: 'usuarios', singular: 'Usuario', activos: true, orden: 'nombre', buscar: ['nombre', 'usuario', 'rol'],
       cols: [
@@ -157,7 +157,7 @@ export const CATALOGOS: Record<string, { titulo: string; desc: string; conf: Con
       campos: [
         { k: 'nombre', t: 'Nombre', req: true, full: true }, { k: 'usuario', t: 'Usuario', req: true },
         { k: 'rol', t: 'Rol', tipo: 'select', op: [{ v: 'admin', t: 'Administrador' }, { v: 'gerente', t: 'Gerente' }, { v: 'cajero', t: 'Cajero' }, { v: 'almacen', t: 'Almacén' }], def: 'cajero' },
-        { k: 'clave', t: 'Clave (PIN)', tipo: 'clave', ayuda: 'Si nadie tiene clave, Cumbre abre directo.' }
+        { k: 'clave', t: 'Clave (PIN)', tipo: 'clave', ayuda: 'Si nadie tiene clave, Cumbre abre directo. En cuanto uses claves, ponle una también al Administrador.' }
       ]
     }
   }

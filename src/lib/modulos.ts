@@ -56,3 +56,24 @@ export function buscarSub(mod: string, sub: string) {
   const m = MODULOS.find((x) => x.id === mod);
   return { m, s: m?.subs.find((x) => x.id === sub) };
 }
+
+/* qué ve cada rol: módulo completo ("ventas") o submódulo ("ventas/pos") */
+export const PERMISOS: Record<string, string[]> = {
+  admin: ['*'],
+  gerente: ['inicio', 'ventas', 'compras', 'inventario', 'logistica', 'config/empresa', 'config/tasas', 'config/respaldos'],
+  cajero: ['ventas/pos', 'ventas/notas', 'ventas/clientes', 'ventas/cobranza', 'config/tasas'],
+  almacen: ['inventario', 'compras/recepciones', 'compras/ordenes', 'logistica']
+};
+export function puede(rol: string, mod: string, sub = ''): boolean {
+  const p = PERMISOS[rol] || PERMISOS.cajero;
+  if (p.includes('*') || p.includes(mod)) return true;
+  if (sub) return p.includes(`${mod}/${sub}`);
+  return p.some((x) => x.startsWith(mod + '/'));
+}
+export function primeraRuta(rol: string): string {
+  for (const m of MODULOS) {
+    if (!m.subs.length) { if (puede(rol, m.id)) return m.id; continue; }
+    for (const s of m.subs) if (puede(rol, m.id, s.id)) return `${m.id}/${s.id}`;
+  }
+  return 'inicio';
+}

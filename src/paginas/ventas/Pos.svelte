@@ -140,8 +140,8 @@
   .cats { display: flex; gap: 6px; flex-wrap: wrap; }
   .chip { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--field); font-weight: 600; font-size: 12.5px; color: var(--ink-2); }
   .chip.on { background: var(--ink); color: var(--bg); border-color: transparent; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; align-content: start; overflow: auto; padding: 2px 4px 8px 2px; }
-  .prod { display: grid; gap: 4px; text-align: left; padding: 14px; border-radius: 16px; min-height: 118px; align-content: start; transition: transform 0.15s var(--ease), border-color 0.2s; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); grid-auto-rows: auto; gap: 10px; align-content: start; overflow: auto; padding: 2px 4px 8px 2px; }
+  .prod { display: grid; grid-template-rows: auto auto auto auto; gap: 3px; text-align: left; padding: 14px; border-radius: 16px; min-height: 136px; height: auto; align-content: start; transition: transform 0.15s var(--ease), border-color 0.2s; }
   .prod:hover { transform: translateY(-2px); border-color: rgba(255, 106, 64, 0.45); }
   .prod:active { transform: scale(0.98); }
   .pn { font-weight: 650; line-height: 1.25; min-height: 34px; }

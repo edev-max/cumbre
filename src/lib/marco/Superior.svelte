@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ruta, ir } from '../rutas.svelte';
   import { buscarSub, MODULOS } from '../modulos';
-  import { app } from '../estado.svelte';
+  import { app, sesion } from '../estado.svelte';
   import { tasaFmt, fechaHora } from '../formato';
   import Icono from '../ui/Icono.svelte';
   const m = $derived(MODULOS.find((x) => x.id === (ruta.partes[0] || 'inicio')));
@@ -26,6 +26,7 @@
   <div class="yo glass glass--flat" title={app.usuario.nombre}>
     <span class="av">{app.usuario.nombre.slice(0, 1)}</span>
     <span class="yo__n">{app.usuario.nombre}</span>
+    {#if sesion.conClave}<button class="btn btn--ghost btn--icon btn--sm" title="Cerrar sesión" aria-label="Cerrar sesión" onclick={() => sesion.salir?.()}><Icono n="salir" size={15} /></button>{/if}
   </div>
 </header>
 

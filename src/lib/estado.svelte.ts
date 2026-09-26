@@ -10,7 +10,7 @@ export const app = $state({
   tasaFecha: '' as string,
   usuario: { id: '', nombre: 'Administrador', rol: 'admin' },
   tema: 'noche' as 'noche' | 'papel',
-  licencia: { estado: 'demo', cliente: '', vence: '' } as { estado: string; cliente: string; vence: string },
+  licencia: { estado: 'demo', cliente: '', vence: '', dias_prueba: 0, escribir: true } as { estado: string; cliente: string; vence: string; dias_prueba: number; escribir: boolean },
   version: 0 // sube cuando cambian datos compartidos (para refrescar vistas)
 });
 
@@ -39,6 +39,9 @@ export async function cambiarTema() {
   await ajuste('tema', app.tema);
 }
 export const refrescar = () => { app.version++; };
+
+/* ---------- sesión ---------- */
+export const sesion = $state({ conClave: false, salir: null as null | (() => void) });
 
 /* ---------- avisos (toasts) ---------- */
 export interface Aviso { id: number; tipo: 'ok' | 'error' | 'info'; texto: string }

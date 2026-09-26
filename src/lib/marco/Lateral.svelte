@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { MODULOS } from '../modulos';
+  import { MODULOS, puede } from '../modulos';
   import { ruta, ir } from '../rutas.svelte';
   import { app, cambiarTema } from '../estado.svelte';
   import Icono from '../ui/Icono.svelte';
@@ -12,7 +12,8 @@
   $effect(() => { abiertos = { [modActual]: true }; });
   function clicMod(m: (typeof MODULOS)[number]) {
     if (!m.subs.length) { ir(m.id); return; }
-    if (modActual !== m.id) { abiertos[m.id] = true; ir(`${m.id}/${m.subs[0].id}`); }
+    const primera = m.subs.find((x) => puede(app.usuario.rol, m.id, x.id)) || m.subs[0];
+    if (modActual !== m.id) { abiertos[m.id] = true; ir(`${m.id}/${primera.id}`); }
     else abiertos[m.id] = !abiertos[m.id];
   }
 </script>
@@ -20,7 +21,7 @@
 <nav class="lat glass" aria-label="Módulos">
   <div class="lat__marca" data-tauri-drag-region><Marca /></div>
   <div class="lat__lista">
-    {#each MODULOS as m}
+    {#each MODULOS.filter((x) => puede(app.usuario.rol, x.id)) as m}
       <div class="mod" class:activo={modActual === m.id}>
         <button class="mod__b" onclick={() => clicMod(m)} aria-expanded={m.subs.length ? !!abiertos[m.id] : undefined}>
           <span class="mod__i"><Icono n={m.icono} /></span>
@@ -29,7 +30,7 @@
         </button>
         {#if m.subs.length && abiertos[m.id]}
           <div class="subs">
-            {#each m.subs as s}
+            {#each m.subs.filter((x) => puede(app.usuario.rol, m.id, x.id)) as s}
               <a class="sub" class:activo={modActual === m.id && subActual === s.id} href="#/{m.id}/{s.id}">{s.nombre}</a>
             {/each}
           </div>
@@ -40,7 +41,7 @@
   <div class="lat__pie">
     <a class="lic" href="#/config/licencia" class:demo={app.licencia.estado !== 'activa'}>
       <Icono n="licencia" size={15} />
-      <span>{app.licencia.estado === 'activa' ? 'Licencia activa' : 'Modo demostración'}</span>
+      <span>{app.licencia.estado === 'activa' ? 'Licencia activa' : !app.licencia.escribir ? 'Sólo lectura' : app.licencia.dias_prueba ? `Prueba: ${app.licencia.dias_prueba} días` : 'Modo demostración'}</span>
     </a>
     <button class="btn btn--ghost btn--icon btn--sm" onclick={cambiarTema} title="Cambiar a tema {app.tema === 'noche' ? 'papel' : 'noche'}" aria-label="Cambiar tema">
       <Icono n={app.tema === 'noche' ? 'sol' : 'tema'} size={16} />
