@@ -12,7 +12,8 @@
     "test": "node --test tests/*.test.mjs",
     "tauri": "tauri",
     "licencia": "node tools/licencias.mjs",
-    "instalador": "tauri build --target x86_64-pc-windows-gnu --no-bundle && cd instalador && makensis -DVERSION=$npm_package_version cumbre.nsi"
+    "instalador": "tauri build --target x86_64-pc-windows-gnu --no-bundle && cd instalador && makensis -DVERSION=$npm_package_version cumbre.nsi",
+    "licencias:instalador": "cd licencias && ../node_modules/.bin/tauri build --target x86_64-pc-windows-gnu --no-bundle && makensis -DVERSION=1.0.0 instalador.nsi"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.8.0",

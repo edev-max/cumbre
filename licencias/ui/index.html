@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es-VE">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apex Licencias</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="cielo" aria-hidden="true"><div class="b1"></div><div class="b2"></div>
+    <svg viewBox="0 0 520 200" preserveAspectRatio="xMidYMax slice"><path class="m" d="M-40 176 L8 176 L120 140 L190 112 L228 84 L242 94 L252 78 L268 96 L290 64 L318 86 L390 132 L470 164 L512 176 L560 176 L560 260 L-40 260 Z"/><path class="c" d="M-40 176 L8 176 L120 140 L190 112 L228 84 L242 94 L252 78 L268 96 L290 64 L318 86 L390 132 L470 164 L512 176 L560 176"/></svg>
+  </div>
+
+  <!-- entrada: crear la clave, desbloquear o restaurar -->
+  <main id="puerta" class="puerta" hidden>
+    <section class="caja glass">
+      <div class="marca"><svg viewBox="0 0 520 200"><path d="M8 176 L120 140 L190 112 L228 84 L242 94 L252 78 L268 96 L290 64 L318 86 L390 132 L470 164 L512 176"/><path class="a" d="M290 50 L284 60 L296 60 Z"/></svg><div><b>Apex Licencias</b><small>para Cumbre</small></div></div>
+      <div id="crear" hidden>
+        <h1>Crea tu clave de Apex</h1>
+        <p class="dim">Es la llave con la que firmas las licencias de Cumbre. Se crea en esta computadora y queda protegida con tu contraseña. <b>No la olvides:</b> sin ella no se pueden emitir licencias.</p>
+        <label class="campo"><span>Contraseña (mínimo 8 caracteres)</span><input id="c1" type="password" autocomplete="new-password" /></label>
+        <label class="campo"><span>Repite la contraseña</span><input id="c2" type="password" autocomplete="new-password" /></label>
+        <button class="btn primario grande" id="btnCrear">Crear mi clave</button>
+        <button class="btn fantasma" id="btnIrRestaurar">Ya tengo una clave respaldada</button>
+      </div>
+      <div id="abrir" hidden>
+        <h1>Hola, Apex</h1>
+        <p class="dim">Escribe tu contraseña para emitir licencias.</p>
+        <label class="campo"><span>Contraseña</span><input id="ca" type="password" autocomplete="current-password" /></label>
+        <button class="btn primario grande" id="btnAbrir">Entrar</button>
+      </div>
+      <div id="restaurar" hidden>
+        <h1>Restaurar tu clave</h1>
+        <p class="dim">Elige el archivo <b>clave-apex.json</b> de tu respaldo (carpeta "Apex Licencias - respaldo") y escribe su contraseña.</p>
+        <button class="btn" id="btnElegirClave">Elegir archivo…</button><small class="mute" id="rutaClave"></small>
+        <label class="campo"><span>Contraseña de esa clave</span><input id="cr" type="password" /></label>
+        <button class="btn primario grande" id="btnRestaurar">Restaurar</button>
+        <button class="btn fantasma" id="btnVolverCrear">Volver</button>
+      </div>
+      <p class="error" id="errPuerta"></p>
+    </section>
+  </main>
+
+  <!-- principal -->
+  <div id="app" class="app" hidden>
+    <header class="top">
+      <div class="marca"><svg viewBox="0 0 520 200"><path d="M8 176 L120 140 L190 112 L228 84 L242 94 L252 78 L268 96 L290 64 L318 86 L390 132 L470 164 L512 176"/><path class="a" d="M290 50 L284 60 L296 60 Z"/></svg><div><b>Apex Licencias</b><small>para Cumbre</small></div></div>
+      <nav class="tabs"><button data-tab="emitir" class="on">Emitir</button><button data-tab="historial">Historial</button><button data-tab="clave">Mi clave</button></nav>
+      <button class="btn fantasma chico" id="btnBloquear">Bloquear</button>
+    </header>
+
+    <section class="vista" id="v-emitir">
+      <div class="dos">
+        <form class="glass tarjeta" id="form">
+          <h2>Nueva licencia</h2>
+          <label class="campo"><span>Cliente *</span><input id="cliente" placeholder="Bodega La Esquina" /></label>
+          <div class="fila2">
+            <label class="campo"><span>RIF</span><input id="rif" placeholder="J-12345678-9" /></label>
+            <label class="campo"><span>WhatsApp del cliente</span><input id="tel" placeholder="0412-1234567" /></label>
+          </div>
+          <label class="campo"><span>Código de equipo *</span><input id="equipo" class="codigo" placeholder="ABCD-1234-EF56-7890" maxlength="19" autocomplete="off" />
+            <small class="mute">Lo ve el cliente en Cumbre → Configuración → Licencia.</small></label>
+          <div class="fila2">
+            <label class="campo"><span>Plan</span><select id="plan"><option>Pyme</option><option>Pro</option><option>Empresa</option></select></label>
+            <label class="campo"><span>Duración</span><select id="duracion"><option value="12">1 año</option><option value="6">6 meses</option><option value="3">3 meses</option><option value="1">1 mes</option><option value="fecha">Hasta una fecha…</option></select></label>
+          </div>
+          <label class="campo" id="campoFecha" hidden><span>Vence el</span><input id="vence" type="date" /></label>
+          <p class="mute" id="resumenVence"></p>
+          <button class="btn primario grande" type="submit">Generar licencia</button>
+          <p class="error" id="errForm"></p>
+        </form>
+        <div class="glass tarjeta" id="resultado">
+          <h2>Licencia</h2>
+          <div class="vacio" id="resVacio"><p class="mute">Llena los datos y toca <b>Generar licencia</b>. Aquí aparece lista para copiar o mandar por WhatsApp.</p></div>
+          <div id="resLleno" hidden>
+            <p class="ok" id="resTitulo"></p>
+            <textarea id="lic" readonly rows="7"></textarea>
+            <div class="acciones">
+              <button class="btn primario" id="btnCopiar">Copiar licencia</button>
+              <button class="btn" id="btnWhats">Enviar por WhatsApp</button>
+            </div>
+            <ol class="pasos">
+              <li>El cliente abre Cumbre → Configuración → Licencia.</li>
+              <li>Pega la licencia y toca <b>Activar</b>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vista" id="v-historial" hidden>
+      <div class="glass tarjeta">
+        <div class="fila"><h2>Licencias emitidas</h2><input id="buscar" placeholder="Buscar cliente, RIF o equipo…" /></div>
+        <table class="tabla"><thead><tr><th>Emitida</th><th>Cliente</th><th>RIF</th><th>Equipo</th><th>Plan</th><th>Vence</th><th></th></tr></thead><tbody id="filas"></tbody></table>
+        <p class="mute vacio" id="histVacio">Todavía no has emitido licencias.</p>
+      </div>
+    </section>
+
+    <section class="vista" id="v-clave" hidden>
+      <div class="dos">
+        <div class="glass tarjeta">
+          <h2>Tu clave pública</h2>
+          <p class="dim">Es la que va dentro del instalador de Cumbre para que reconozca tus licencias. Se puede compartir sin problema: con ella se verifica, pero no se firma.</p>
+          <code id="publica"></code>
+          <button class="btn" id="btnCopiarPublica">Copiar clave pública</button>
+        </div>
+        <div class="glass tarjeta">
+          <h2>Respaldo de la clave</h2>
+          <p class="dim">Guarda una copia en Google Drive o en un pendrive. Si esta computadora se daña, con ese respaldo y tu contraseña sigues emitiendo licencias en otra.</p>
+          <button class="btn primario" id="btnRespaldar">Respaldar clave…</button>
+          <p class="ok" id="okRespaldo"></p>
+          <small class="mute" id="carpetaDatos"></small>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="aviso" id="aviso" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

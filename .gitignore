@@ -12,3 +12,6 @@ keys/
 
 # instaladores generados
 instalador/*.exe
+licencias/*.exe
+licencias/src-tauri/target/
+licencias/src-tauri/gen/

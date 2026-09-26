@@ -55,7 +55,20 @@ Si algún usuario tiene clave, Cumbre pide elegir usuario al abrir. Cada rol ve 
 - La licencia está firmada con la clave privada de Apex (Ed25519) y atada al **código de equipo** que muestra Cumbre en Configuración → Licencia. El programa sólo trae la clave pública: puede verificar licencias, pero no fabricarlas.
 - Al vencer hay **7 días de gracia**.
 
-### Antes de la primera venta: crear las claves de Apex
+### Apex Licencias (la app de Apex para emitir licencias)
+
+`licencias/` es una app de Windows aparte, sólo para Apex. No se entrega a clientes.
+
+1. **Primera vez:** crea la clave de Apex con una contraseña. La clave privada se genera en esa computadora y queda cifrada (Argon2id + ChaCha20-Poly1305); nunca sale de ahí salvo en el respaldo cifrado.
+2. **Respaldar:** pestaña *Mi clave* → *Respaldar clave…* (ideal: Google Drive). Con ese archivo y la contraseña se restaura en otra computadora.
+3. **Clave pública:** pestaña *Mi clave* → *Copiar clave pública*. Va en `src-tauri/clave_publica.txt` y se vuelve a armar el instalador de Cumbre (una sola vez; desde ahí Cumbre reconoce las licencias de esa clave).
+4. **Emitir:** cliente, RIF, WhatsApp y código de equipo → *Generar licencia* → *Copiar* o *Enviar por WhatsApp*. Queda en el historial.
+
+Se arma con `npm run licencias:instalador` (deja `licencias/Apex-Licencias-<versión>-instalador.exe`).
+
+La herramienta de línea de comandos `npm run licencia -- …` sigue sirviendo para lo mismo.
+
+### Por línea de comandos (alternativa)
 
 ```bash
 npm run licencia -- claves

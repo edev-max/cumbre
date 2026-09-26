@@ -1,0 +1,57 @@
+/* Apex Licencias · mismo lenguaje que Cumbre: noche, vidrio y rojo señal */
+@font-face { font-family: 'Mona Sans'; src: url('fonts/mona-sans-latin.woff2') format('woff2'); font-weight: 300 900; font-stretch: 75% 125%; }
+@font-face { font-family: 'Mona Sans'; src: url('fonts/mona-sans-latin-ext.woff2') format('woff2'); font-weight: 300 900; font-stretch: 75% 125%; unicode-range: U+0100-02BA, U+1E00-1EFF; }
+:root { --bg: #070B17; --ink: #F3F5FB; --ink2: #B9C0D4; --ink3: #7F88A3; --line: rgba(255,255,255,.1); --line2: rgba(255,255,255,.16); --field: rgba(255,255,255,.06); --rojo: #E8380D; --rojo2: #FF5A2E; --ok: #48D597; --bad: #FF6B57; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { font: 14px/1.45 'Mona Sans', 'Segoe UI', system-ui, sans-serif; color: var(--ink); background: var(--bg); overflow: hidden; -webkit-font-smoothing: antialiased; }
+h1, h2 { margin: 0; font-stretch: 118%; letter-spacing: -.02em; line-height: 1.1; }
+h1 { font-size: 26px; font-weight: 850; } h2 { font-size: 17px; font-weight: 750; }
+p { margin: 0; } [hidden] { display: none !important; }
+.dim { color: var(--ink2); } .mute { color: var(--ink3); } .ok { color: var(--ok); font-weight: 600; } .error { color: var(--bad); font-weight: 600; min-height: 1em; }
+.cielo { position: fixed; inset: 0; background: linear-gradient(180deg, #0B1430, #1B1440); overflow: hidden; }
+.cielo .b1, .cielo .b2 { position: absolute; border-radius: 50%; filter: blur(60px); }
+.b1 { width: 60vw; height: 60vw; left: -18vw; top: -26vw; background: rgba(70,110,255,.2); }
+.b2 { width: 46vw; height: 46vw; right: -10vw; bottom: -18vw; background: rgba(232,56,13,.22); }
+.cielo svg { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 40vh; }
+.cielo .m { fill: rgba(4,7,16,.55); } .cielo .c { fill: none; stroke: rgba(246,241,232,.14); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.glass { position: relative; background: linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.035)); backdrop-filter: blur(22px) saturate(170%); border: 1px solid rgba(255,255,255,.12); border-radius: 22px; box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 24px 60px -24px rgba(0,0,0,.7); }
+.marca { display: flex; align-items: center; gap: 10px; }
+.marca svg { width: 46px; height: 18px; } .marca path { fill: none; stroke: var(--ink); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; } .marca .a { fill: var(--rojo); stroke: none; }
+.marca div { display: grid; line-height: 1.05; } .marca b { font-size: 17px; font-weight: 850; font-stretch: 125%; } .marca small { font-size: 11px; color: var(--ink3); }
+.puerta { position: relative; z-index: 1; display: grid; place-items: center; height: 100vh; padding: 24px; }
+.caja { width: min(460px, 100%); padding: 30px; display: grid; gap: 16px; }
+.caja > div { display: grid; gap: 14px; }
+.campo { display: grid; gap: 6px; } .campo > span { font-size: 12px; font-weight: 600; color: var(--ink2); } .campo small { font-size: 11.5px; }
+input, select, textarea { width: 100%; font: inherit; color: var(--ink); height: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--line2); background: var(--field); }
+textarea { height: auto; padding: 10px 12px; resize: none; font: 600 12px ui-monospace, 'Cascadia Mono', monospace; word-break: break-all; }
+select option { background: #141A2C; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: rgba(255,106,64,.7); box-shadow: 0 0 0 3px rgba(232,56,13,.18); }
+.codigo { font: 700 16px ui-monospace, 'Cascadia Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 11px; border: 1px solid var(--line2); background: var(--field); color: var(--ink); font: 600 13.5px 'Mona Sans', sans-serif; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+.btn:hover { background: rgba(255,255,255,.1); }
+.primario { background: linear-gradient(180deg, var(--rojo2), var(--rojo)); border-color: rgba(255,140,110,.5); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 8px 22px -10px rgba(232,56,13,.8); }
+.primario:hover { background: linear-gradient(180deg, #FF6A40, #F0431A); }
+.grande { height: 46px; font-size: 15px; border-radius: 14px; }
+.fantasma { background: transparent; border-color: transparent; box-shadow: none; color: var(--ink2); }
+.chico { height: 32px; padding: 0 12px; }
+.app { position: relative; z-index: 1; display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+.top { display: flex; align-items: center; gap: 20px; padding: 18px 26px; }
+.tabs { display: flex; gap: 4px; padding: 4px; border-radius: 13px; background: var(--field); border: 1px solid var(--line); margin-right: auto; margin-left: 20px; }
+.tabs button { height: 32px; padding: 0 16px; border: 0; border-radius: 10px; background: transparent; color: var(--ink2); font: 600 13px 'Mona Sans', sans-serif; cursor: pointer; }
+.tabs button.on { background: rgba(255,255,255,.12); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255,255,255,.2); }
+.vista { overflow: auto; padding: 4px 26px 26px; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.tarjeta { padding: 22px; display: grid; gap: 14px; }
+.fila2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fila { display: flex; align-items: center; gap: 12px; } .fila input { width: 280px; margin-left: auto; }
+.acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+.pasos { margin: 0; padding-left: 20px; color: var(--ink2); display: grid; gap: 4px; }
+.vacio { padding: 30px 10px; text-align: center; }
+code { display: block; padding: 12px; border-radius: 12px; background: var(--field); border: 1px solid var(--line); font: 600 13px ui-monospace, 'Cascadia Mono', monospace; word-break: break-all; letter-spacing: .03em; }
+.tabla { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tabla th { text-align: left; font-size: 11.5px; color: var(--ink3); font-weight: 650; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.tabla td { padding: 10px; border-bottom: 1px solid var(--line); }
+.tabla td.eq { font: 600 12.5px ui-monospace, monospace; }
+.vencida { color: var(--bad); }
+.aviso { position: fixed; right: 18px; bottom: 18px; z-index: 9; padding: 11px 14px; border-radius: 14px; background: rgba(20,26,44,.9); border: 1px solid var(--line2); font-weight: 600; }
