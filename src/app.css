@@ -1,0 +1,232 @@
+/* ==========================================================================
+   Cumbre · by Apex Consulting — sistema visual
+   Marca Apex: Azul noche #070B17, Rojo señal #E8380D (poco, ≤10 %),
+   Papel #F6F1E8. Mona Sans ancha y pesada en títulos.
+   Vidrio líquido: capas translúcidas con desenfoque, un brillo en el borde
+   superior y un fondo con luz propia (el cielo del Ávila) que se refracta.
+   ========================================================================== */
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('./assets/fonts/mona-sans-latin.woff2') format('woff2');
+  font-weight: 300 900; font-stretch: 75% 125%; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('./assets/fonts/mona-sans-latin-ext.woff2') format('woff2');
+  font-weight: 300 900; font-stretch: 75% 125%; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+1EF2-1EFF, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --noche: #070B17;
+  --rojo: #E8380D;
+  --rojo-2: #FF5A2E;
+  --papel: #F6F1E8;
+
+  --font: 'Mona Sans', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --r-sm: 10px; --r: 14px; --r-lg: 20px; --r-xl: 26px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --t: 0.22s;
+
+  --sidebar: 248px;
+  --top: 56px;
+}
+
+/* ---------------- noche (predeterminado) ---------------- */
+:root, [data-theme='noche'] {
+  color-scheme: dark;
+  --bg: #070B17;
+  --ink: #F3F5FB;
+  --ink-2: #B9C0D4;
+  --ink-3: #7F88A3;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.16);
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.035));
+  --glass-solid: rgba(20, 26, 44, 0.72);
+  --glass-hi: rgba(255, 255, 255, 0.2);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --field: rgba(255, 255, 255, 0.055);
+  --field-hover: rgba(255, 255, 255, 0.085);
+  --hover: rgba(255, 255, 255, 0.06);
+  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7), 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+  --ok: #48D597; --warn: #F5B94A; --bad: #FF6B57; --info: #7FA7FF;
+  --sky-a: #0B1430; --sky-b: #1B1440; --glow-red: rgba(232, 56, 13, 0.22); --glow-blue: rgba(70, 110, 255, 0.2);
+  --ridge: rgba(246, 241, 232, 0.14);
+}
+
+/* ---------------- papel (claro) ---------------- */
+[data-theme='papel'] {
+  color-scheme: light;
+  --bg: #EFE9DE;
+  --ink: #0B1020;
+  --ink-2: #3A4058;
+  --ink-3: #6E7389;
+  --line: rgba(7, 11, 23, 0.08);
+  --line-2: rgba(7, 11, 23, 0.16);
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.5));
+  --glass-solid: rgba(255, 253, 249, 0.86);
+  --glass-hi: rgba(255, 255, 255, 0.95);
+  --glass-edge: rgba(7, 11, 23, 0.08);
+  --field: rgba(255, 255, 255, 0.7);
+  --field-hover: rgba(255, 255, 255, 0.95);
+  --hover: rgba(7, 11, 23, 0.045);
+  --shadow: 0 24px 50px -28px rgba(7, 11, 23, 0.35), 0 2px 6px -2px rgba(7, 11, 23, 0.12);
+  --ok: #0E9F62; --warn: #B7791F; --bad: #D63A1F; --info: #3056D3;
+  --sky-a: #F6F1E8; --sky-b: #E9E2F2; --glow-red: rgba(232, 56, 13, 0.14); --glow-blue: rgba(70, 110, 255, 0.12);
+  --ridge: rgba(7, 11, 23, 0.1);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: var(--font); font-size: 14px; line-height: 1.45;
+  color: var(--ink); background: var(--bg);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+/* en Windows 11 la ventana trae su propio vidrio (Mica): el fondo se aclara */
+html.mica body { background: transparent; }
+html.mica .cielo { opacity: 0.82; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--rojo-2); outline-offset: 2px; border-radius: 6px; }
+::selection { background: rgba(232, 56, 13, 0.35); }
+h1, h2, h3 { margin: 0; font-stretch: 118%; letter-spacing: -0.02em; line-height: 1.1; }
+h1 { font-size: 26px; font-weight: 820; }
+h2 { font-size: 17px; font-weight: 750; }
+h3 { font-size: 14px; font-weight: 700; }
+p { margin: 0; }
+a { color: inherit; }
+
+/* scroll fino */
+* { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+
+/* ---------------- el vidrio ---------------- */
+.glass {
+  position: relative;
+  background: var(--glass);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255, 255, 255, 0.03), var(--shadow);
+}
+/* brillo líquido: una luz curva que corre por el borde superior */
+.glass::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 60% at 20% -10%, rgba(255, 255, 255, 0.12), transparent 55%);
+  mix-blend-mode: screen;
+}
+[data-theme='papel'] .glass::before { background: radial-gradient(120% 60% at 20% -10%, rgba(255, 255, 255, 0.7), transparent 55%); mix-blend-mode: normal; }
+.glass--flat { box-shadow: inset 0 1px 0 var(--glass-hi); }
+
+/* ---------------- controles ---------------- */
+.btn {
+  --b: var(--field); display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 36px; padding: 0 14px; border-radius: 11px; border: 1px solid var(--line-2);
+  background: var(--b); color: var(--ink); font-weight: 600; font-size: 13.5px; white-space: nowrap;
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  transition: background var(--t), border-color var(--t), transform 0.12s, box-shadow var(--t);
+}
+.btn:hover { --b: var(--field-hover); }
+.btn:active { transform: translateY(1px) scale(0.99); }
+.btn:disabled { opacity: 0.45; pointer-events: none; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn--primary {
+  --b: linear-gradient(180deg, #FF5A2E, #E8380D); border-color: rgba(255, 140, 110, 0.5); color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 22px -10px rgba(232, 56, 13, 0.8);
+}
+.btn--primary:hover { --b: linear-gradient(180deg, #FF6A40, #F0431A); }
+.btn--ghost { --b: transparent; border-color: transparent; box-shadow: none; }
+.btn--ghost:hover { --b: var(--hover); }
+.btn--danger { color: var(--bad); }
+.btn--sm { height: 30px; padding: 0 10px; font-size: 12.5px; border-radius: 9px; }
+.btn--lg { height: 46px; padding: 0 20px; font-size: 15px; border-radius: 14px; }
+.btn--icon { width: 36px; padding: 0; }
+.btn--sm.btn--icon { width: 30px; }
+
+.field { display: grid; gap: 6px; min-width: 0; }
+.field > span { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.field small { font-size: 11.5px; color: var(--ink-3); }
+.input, .select, .textarea {
+  width: 100%; height: 38px; padding: 0 12px; border-radius: 11px;
+  border: 1px solid var(--line-2); background: var(--field); color: var(--ink);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  transition: border-color var(--t), background var(--t), box-shadow var(--t);
+}
+.textarea { height: auto; min-height: 76px; padding: 10px 12px; resize: vertical; }
+.input:hover, .select:hover, .textarea:hover { background: var(--field-hover); }
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: rgba(255, 106, 64, 0.7); box-shadow: 0 0 0 3px rgba(232, 56, 13, 0.18); }
+.input::placeholder, .textarea::placeholder { color: var(--ink-3); }
+.input.num { text-align: right; font-variant-numeric: tabular-nums; }
+.select { appearance: none; padding-right: 32px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237F88A3' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.select option { background: #141A2C; color: #F3F5FB; }
+[data-theme='papel'] .select option { background: #fff; color: #0B1020; }
+.check { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--rojo); }
+
+.grid-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.grid-form .full { grid-column: 1 / -1; }
+
+/* ---------------- etiquetas de estado ---------------- */
+.tag {
+  --c: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px;
+  border-radius: 999px; font-size: 11.5px; font-weight: 650; color: var(--c);
+  background: color-mix(in oklab, var(--c) 14%, transparent); border: 1px solid color-mix(in oklab, var(--c) 28%, transparent);
+  white-space: nowrap;
+}
+.tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.stack > .tag, .kpi > .tag, .card > .tag { justify-self: start; }
+.tag--ok { --c: var(--ok); } .tag--warn { --c: var(--warn); } .tag--bad { --c: var(--bad); } .tag--info { --c: var(--info); }
+
+/* ---------------- tablas ---------------- */
+.tabla { width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; }
+.tabla th {
+  position: sticky; top: 0; z-index: 1; text-align: left; font-size: 11.5px; font-weight: 650; color: var(--ink-3);
+  padding: 10px 14px; background: var(--glass-solid); backdrop-filter: blur(16px); border-bottom: 1px solid var(--line);
+  white-space: nowrap; user-select: none;
+}
+.tabla td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.tabla tr:last-child td { border-bottom: 0; }
+.tabla tbody tr { transition: background 0.12s; }
+.tabla tbody tr.clic { cursor: pointer; }
+.tabla tbody tr:hover { background: var(--hover); }
+.tabla .r { text-align: right; }
+.tabla .c { text-align: center; }
+.tabla .mute { color: var(--ink-3); }
+.tabla .fuerte { font-weight: 650; }
+
+.num { font-variant-numeric: tabular-nums; }
+.mute { color: var(--ink-3); }
+.dim { color: var(--ink-2); }
+.rojo { color: var(--rojo-2); }
+.ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+
+/* ---------------- pestañas ---------------- */
+.tabs { display: flex; gap: 4px; padding: 4px; border-radius: 13px; background: var(--field); border: 1px solid var(--line); justify-self: start; width: max-content; }
+.tabs button { height: 32px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; font-weight: 600; color: var(--ink-2); }
+.tabs button.on { background: rgba(255, 255, 255, 0.12); color: var(--ink); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 var(--glass-hi); }
+[data-theme='papel'] .tabs button.on { background: #fff; }
+
+/* ---------------- indicadores ---------------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.kpi { display: grid; gap: 4px; align-content: start; padding: 16px 18px; }
+.kpi > span { font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.kpi > b { font-size: 24px; font-weight: 820; font-stretch: 112%; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.kpi > small { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* ---------------- utilidades ---------------- */
+.row { display: flex; align-items: center; gap: 10px; }
+.row--wrap { flex-wrap: wrap; }
+.spacer { flex: 1; }
+.stack { display: grid; gap: 14px; }
+.card { padding: 18px; }
+.vacio { display: grid; place-items: center; gap: 8px; padding: 48px 20px; text-align: center; color: var(--ink-3); }
+.vacio svg { width: 40px; height: 40px; opacity: 0.6; }
+kbd { font: 600 11px var(--font); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--field); color: var(--ink-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
