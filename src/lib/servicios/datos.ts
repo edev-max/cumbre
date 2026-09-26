@@ -90,6 +90,13 @@ export async function sembrarEjemplo() {
     S.push({ sql: 'INSERT INTO stock (producto_id, almacen_id, cantidad) VALUES (?, ?, ?)', params: [id, 'principal', ini] });
     S.push({ sql: `INSERT INTO movimientos (id, fecha, tipo, producto_id, almacen_id, cantidad, costo_c, nota, usuario) VALUES (?, ?, 'inicial', ?, 'principal', ?, ?, 'Inventario inicial', 'Administrador')`, params: [uid(), ahora(-15), id, ini, Math.round(costo * 100)] });
   }
+  // presentaciones: cómo llega del proveedor y, a veces, cómo se vende al mayor
+  const PRES: [string, string, number, number, number][] = [ // [código, nombre, trae, compra, venta]
+    ['7590001', 'Bulto x 20', 20, 1, 1], ['7590002', 'Bulto x 24', 24, 1, 0], ['7590003', 'Bulto x 12', 12, 1, 0],
+    ['7590005', 'Caja x 12', 12, 1, 0], ['7590014', 'Caja x 6', 6, 1, 1], ['7590015', 'Paca x 6', 6, 1, 1],
+    ['7590009', 'Caja x 48', 48, 1, 0], ['7590023', 'Pieza de 4 kg', 4, 1, 0]
+  ];
+  for (const [cod, nom, f, c, v] of PRES) S.push({ sql: 'INSERT INTO presentaciones (id, producto_id, nombre, factor, compra, venta) VALUES (?, ?, ?, ?, ?, ?)', params: [uid(), pid[cod], nom, f, c, v] });
   const cid: string[] = [];
   CLIENTES.forEach(([n, rif, tel, dir, zona, lim, dias], i) => {
     const id = uid(); cid.push(id);

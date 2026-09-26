@@ -11,7 +11,7 @@
 
   let { id }: { id: string } = $props();
   let c = $state<any>(null), lineas = $state<any[]>([]), recs = $state<any[]>([]), pagos = $state<any[]>([]);
-  let verRecibir = $state(false), rec = $state<{ id: string; desc: string; falta: number; cant: string; costo: string; unidad: string }[]>([]), notaRec = $state('');
+  let verRecibir = $state(false), rec = $state<{ id: string; desc: string; falta: number; cant: string; costo: string; unidad: string; factor: number; base: string }[]>([]), notaRec = $state('');
   let pagar = $state(false);
   $effect(() => { app.version; cargar(); });
   async function cargar() {
@@ -23,7 +23,7 @@
   const saldo = $derived(c ? Math.max(0, c.total_c - c.pagado_c) : 0);
   const abierta = $derived(c && ['ordenada', 'parcial'].includes(c.estado));
   function abrirRecibir() {
-    rec = lineas.filter((l) => l.cantidad > l.recibido).map((l) => ({ id: l.id, desc: l.descripcion, falta: l.cantidad - l.recibido, cant: num(l.cantidad - l.recibido), costo: montoEditable(l.costo_c), unidad: l.unidad || 'und' }));
+    rec = lineas.filter((l) => l.cantidad > l.recibido).map((l) => ({ id: l.id, desc: l.descripcion, falta: l.cantidad - l.recibido, cant: num(l.cantidad - l.recibido), costo: montoEditable(l.costo_c), unidad: l.presentacion || l.unidad || 'und', factor: l.factor || 1, base: l.unidad || 'und' }));
     notaRec = ''; verRecibir = true;
   }
   async function confirmarRecibir() {
@@ -68,7 +68,7 @@
         <thead><tr><th>Producto</th><th class="r">Pedido</th><th class="r">Recibido</th><th class="r">Costo</th><th class="r">IVA</th><th class="r">Total</th></tr></thead>
         <tbody>
           {#each lineas as l}
-            <tr><td class="fuerte">{l.descripcion}</td><td class="r">{num(l.cantidad)} {l.unidad}</td>
+            <tr><td><b>{l.descripcion}</b>{#if l.presentacion}<br /><small class="mute">{l.presentacion} · {num(l.cantidad * l.factor)} {l.unidad} en total</small>{/if}</td><td class="r">{num(l.cantidad)} {l.presentacion || l.unidad}</td>
               <td class="r" class:ok={l.recibido >= l.cantidad} class:warn={l.recibido > 0 && l.recibido < l.cantidad}>{num(l.recibido)}</td>
               <td class="r">{usd(l.costo_c)}</td><td class="r mute">{l.impuesto_tasa ? l.impuesto_tasa + ' %' : 'E'}</td><td class="r fuerte">{usd(l.total_c)}</td></tr>
           {/each}
@@ -89,9 +89,9 @@
     <div class="stack">
       {#each rec as r}
         <div class="rec">
-          <span><b>{r.desc}</b><br /><small class="mute">Faltan {num(r.falta)} {r.unidad}</small></span>
+          <span><b>{r.desc}</b><br /><small class="mute">Faltan {num(r.falta)} {r.unidad}{r.factor !== 1 ? ` · entran ${num(leerNumero(r.cant) * r.factor)} ${r.base} a ${usd(Math.round(leerMonto(r.costo) / r.factor))} c/u` : ''}</small></span>
           <label class="field"><span>Llegó</span><input class="input num" bind:value={r.cant} inputmode="decimal" /></label>
-          <label class="field"><span>Costo $</span><input class="input num" bind:value={r.costo} inputmode="decimal" /></label>
+          <label class="field"><span>Costo $ c/u</span><input class="input num" bind:value={r.costo} inputmode="decimal" /></label>
         </div>
       {/each}
       <label class="field"><span>Notas</span><input class="input" bind:value={notaRec} placeholder="Opcional: guía, chofer…" /></label>

@@ -22,7 +22,7 @@ export async function documentoVenta(id: string, formato: 'ticket' | 'carta' = '
   const C = await q('SELECT c.*, m.nombre AS metodo FROM cobros c LEFT JOIN metodos_pago m ON m.id = c.metodo_id WHERE c.venta_id = ? AND c.anulado = 0', [id]);
   const a = app.ajustes, t = v.tasa || app.tasa;
   const ancho = formato === 'ticket' ? '72mm' : '190mm';
-  const filas = L.map((l) => `<tr><td>${esc(l.descripcion)}<br><small>${num(l.cantidad)} × ${usd(l.precio_c)}${l.impuesto_tasa ? '' : ' (E)'}</small></td><td class="r">${usd(l.total_c)}</td></tr>`).join('');
+  const filas = L.map((l) => `<tr><td>${esc(l.descripcion)}${l.presentacion ? ' (' + esc(l.presentacion) + ')' : ''}<br><small>${num(l.cantidad)} × ${usd(l.precio_c)}${l.impuesto_tasa ? '' : ' (E)'}</small></td><td class="r">${usd(l.total_c)}</td></tr>`).join('');
   const pagos = C.map((c) => `<tr><td>${esc(c.metodo)}${c.referencia ? ' · ' + esc(c.referencia) : ''}</td><td class="r">${c.moneda === 'VES' ? 'Bs ' + num(c.monto) : usd(c.monto_c)}</td></tr>`).join('');
   imprimirHtml(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(v.numero)}</title><style>
     @page { size: ${formato === 'ticket' ? '80mm auto' : 'letter'}; margin: ${formato === 'ticket' ? '4mm' : '14mm'}; }

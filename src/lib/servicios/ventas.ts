@@ -6,7 +6,8 @@ import { sStock, sMov, verificarStock, quien } from './comun';
 
 export const CONTADO = 'contado';
 
-export interface LineaVenta { producto_id: string | null; descripcion: string; cantidad: number; precio_c: number; descuento?: number; impuesto_tasa: number; costo_c?: number }
+/** cantidad y precio van en la presentación (factor = unidades base que trae; 1 si es la unidad base) */
+export interface LineaVenta { producto_id: string | null; descripcion: string; cantidad: number; precio_c: number; descuento?: number; impuesto_tasa: number; costo_c?: number; presentacion_id?: string | null; presentacion?: string | null; factor?: number }
 export interface PagoIn { metodo_id: string; moneda: string; monto: number; referencia?: string }
 export interface VentaIn {
   cliente_id: string; almacen_id: string; origen: 'pos' | 'nota'; entrega?: 'retira' | 'despacho';
@@ -34,7 +35,8 @@ export async function crearVenta(v: VentaIn): Promise<{ id: string; numero: stri
     }
   }
   const salidas = new Map<string, number>();
-  for (const l of lineas) if (l.producto_id) salidas.set(l.producto_id, (salidas.get(l.producto_id) || 0) + l.cantidad);
+  const base = (l: LineaVenta) => l.cantidad * (l.factor || 1);
+  for (const l of lineas) if (l.producto_id) salidas.set(l.producto_id, (salidas.get(l.producto_id) || 0) + base(l));
   await verificarStock(v.almacen_id, salidas);
 
   // costo del momento, para la utilidad
@@ -51,14 +53,14 @@ export async function crearVenta(v: VentaIn): Promise<{ id: string; numero: stri
     params: [id, nro.numero, fecha, v.cliente_id, v.almacen_id, v.origen, entrega, t.subtotal_c, t.descuento_c, t.impuesto_c, t.total_c, Math.min(pagado, t.total_c), tasa, debe > 1 ? v.vence || null : null, v.notas || null, quien()]
   });
   for (const l of lineas) {
-    const r = calcLinea(l), costo = l.producto_id ? costos.get(l.producto_id) ?? l.costo_c ?? 0 : 0;
+    const f = l.factor || 1, r = calcLinea(l), costoBase = l.producto_id ? costos.get(l.producto_id) ?? l.costo_c ?? 0 : 0, costo = Math.round(costoBase * f);
     S.push({
-      sql: `INSERT INTO venta_lineas (id, venta_id, producto_id, descripcion, cantidad, precio_c, descuento, impuesto_tasa, costo_c, total_c) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      params: [uid(), id, l.producto_id, l.descripcion, l.cantidad, l.precio_c, l.descuento || 0, l.impuesto_tasa, costo, r.total_c]
+      sql: `INSERT INTO venta_lineas (id, venta_id, producto_id, descripcion, cantidad, precio_c, descuento, impuesto_tasa, costo_c, total_c, presentacion_id, presentacion, factor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      params: [uid(), id, l.producto_id, l.descripcion, l.cantidad, l.precio_c, l.descuento || 0, l.impuesto_tasa, costo, r.total_c, l.presentacion_id || null, l.presentacion || null, f]
     });
     if (l.producto_id) {
-      S.push(sStock(l.producto_id, v.almacen_id, -l.cantidad));
-      S.push(sMov({ id: uid(), fecha, tipo: 'venta', producto_id: l.producto_id, almacen_id: v.almacen_id, cantidad: -l.cantidad, costo_c: costo, ref_tipo: 'venta', ref_id: id, ref_numero: nro.numero }));
+      S.push(sStock(l.producto_id, v.almacen_id, -base(l)));
+      S.push(sMov({ id: uid(), fecha, tipo: 'venta', producto_id: l.producto_id, almacen_id: v.almacen_id, cantidad: -base(l), costo_c: costoBase, ref_tipo: 'venta', ref_id: id, ref_numero: nro.numero, nota: l.presentacion || undefined }));
     }
   }
   pagos.forEach((p, i) => S.push(sCobro({ fecha, cliente_id: v.cliente_id, venta_id: id, metodo_id: p.metodo_id, moneda: p.moneda, monto: p.monto, tasa, monto_c: pagosC[i], referencia: p.referencia })));
@@ -118,7 +120,7 @@ export async function anularCobro(id: string) {
 export async function anularVenta(id: string, motivo = '') {
   const v = await uno<{ numero: string; estado: string; almacen_id: string }>('SELECT numero, estado, almacen_id FROM ventas WHERE id = ?', [id]);
   if (!v || v.estado === 'anulada') return;
-  const lineas = await q('SELECT producto_id, cantidad, costo_c FROM venta_lineas WHERE venta_id = ? AND producto_id IS NOT NULL', [id]);
+  const lineas = await q('SELECT producto_id, cantidad * factor AS cantidad, costo_c / factor AS costo_c FROM venta_lineas WHERE venta_id = ? AND producto_id IS NOT NULL', [id]);
   const S: Sentencia[] = [
     { sql: `UPDATE ventas SET estado = 'anulada', pagado_c = 0, notas = TRIM(COALESCE(notas, '') || ' ' || ?) WHERE id = ?`, params: [motivo ? 'Anulada: ' + motivo : 'Anulada', id] },
     { sql: 'UPDATE cobros SET anulado = 1 WHERE venta_id = ?', params: [id] },
@@ -126,7 +128,7 @@ export async function anularVenta(id: string, motivo = '') {
   ];
   for (const l of lineas) {
     S.push(sStock(l.producto_id, v.almacen_id, l.cantidad));
-    S.push(sMov({ id: uid(), tipo: 'anulacion', producto_id: l.producto_id, almacen_id: v.almacen_id, cantidad: l.cantidad, costo_c: l.costo_c, ref_tipo: 'venta', ref_id: id, ref_numero: v.numero, nota: motivo }));
+    S.push(sMov({ id: uid(), tipo: 'anulacion', producto_id: l.producto_id, almacen_id: v.almacen_id, cantidad: l.cantidad, costo_c: Math.round(l.costo_c), ref_tipo: 'venta', ref_id: id, ref_numero: v.numero, nota: motivo }));
   }
   await lote(S);
 }

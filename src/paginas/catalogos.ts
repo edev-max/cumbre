@@ -47,36 +47,6 @@ export const CATALOGOS: Record<string, { titulo: string; desc: string; conf: Con
       ]
     }
   },
-  productos: {
-    titulo: 'Productos', desc: 'Precios en dólares sin IVA; el sistema calcula el IVA y los bolívares.',
-    conf: {
-      tabla: 'productos', singular: 'Producto', activos: true, orden: 'nombre',
-      select: `SELECT p.*, c.nombre AS categoria, i.tasa AS iva, COALESCE((SELECT SUM(cantidad) FROM stock s WHERE s.producto_id = p.id), 0) AS existencia FROM productos p
-               LEFT JOIN categorias c ON c.id = p.categoria_id LEFT JOIN impuestos i ON i.id = p.impuesto_id`,
-      buscar: ['nombre', 'codigo', 'barra', 'categoria'],
-      cols: [
-        { k: 'codigo', t: 'Código', w: '90px', clase: activo }, { k: 'nombre', t: 'Producto', clase: (r) => 'fuerte ' + activo(r) }, { k: 'categoria', t: 'Categoría' },
-        { k: 'costo_c', t: 'Costo', al: 'r', f: (r) => usd(r.costo_c), clase: () => 'mute' }, { k: 'precio_c', t: 'Precio', al: 'r', f: (r) => usd(r.precio_c), clase: () => 'fuerte' },
-        { k: 'margen', t: 'Margen', al: 'r', f: (r) => (r.precio_c ? pct(((r.precio_c - r.costo_c) / r.precio_c) * 100) : '—') },
-        { k: 'iva', t: 'IVA', al: 'r', f: (r) => (r.iva ? pct(r.iva) : 'Exento') },
-        { k: 'existencia', t: 'Existencia', al: 'r', f: (r) => num(r.existencia) + ' ' + r.unidad, clase: (r) => (r.existencia <= r.stock_min ? 'warn fuerte' : '') }
-      ],
-      campos: [
-        { k: 'nombre', t: 'Nombre', req: true, full: true },
-        { k: 'codigo', t: 'Código interno' }, { k: 'barra', t: 'Código de barras' },
-        { k: 'categoria_id', t: 'Categoría', tipo: 'select', op: ops(`SELECT id AS v, nombre AS t FROM categorias WHERE activo = 1 ORDER BY nombre`), def: 'general' },
-        { k: 'unidad', t: 'Unidad', tipo: 'select', op: [{ v: 'und', t: 'Unidad' }, { v: 'kg', t: 'Kilo' }, { v: 'lt', t: 'Litro' }, { v: 'caja', t: 'Caja' }, { v: 'bulto', t: 'Bulto' }, { v: 'paq', t: 'Paquete' }], def: 'und' },
-        { k: 'costo_c', t: 'Costo ($)', tipo: 'monto', def: 0, ayuda: 'Se actualiza solo con cada compra (promedio).' },
-        { k: 'precio_c', t: 'Precio de venta ($, sin IVA)', tipo: 'monto', def: 0, req: true },
-        { k: 'impuesto_id', t: 'Impuesto', tipo: 'select', op: ops(`SELECT id AS v, nombre || ' (' || tasa || ' %)' AS t FROM impuestos WHERE activo = 1 ORDER BY tasa DESC`), def: 'iva16' },
-        { k: 'stock_min', t: 'Existencia mínima', tipo: 'numero', def: 0, ayuda: 'Te avisamos cuando baje de aquí.' },
-        { k: 'se_vende', t: 'Se vende', tipo: 'check', def: true }, { k: 'se_compra', t: 'Se compra', tipo: 'check', def: true }
-      ],
-      validar: async (d, id) => {
-        if (d.codigo && (await q(`SELECT 1 FROM productos WHERE codigo = ? AND id != COALESCE(?, '')`, [d.codigo, id ?? null])).length) return 'Ese código ya lo tiene otro producto.';
-      }
-    }
-  },
   categorias: {
     titulo: 'Categorías', desc: 'Agrupa tus productos para buscarlos y reportarlos mejor.',
     conf: {

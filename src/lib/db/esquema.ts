@@ -149,5 +149,30 @@ export const MIGRACIONES: string[] = [
     id INTEGER PRIMARY KEY AUTOINCREMENT, fecha TEXT NOT NULL DEFAULT (datetime('now','localtime')),
     usuario TEXT, accion TEXT NOT NULL, detalle TEXT
   );
+  `,
+
+  /* ---------- 2 · presentaciones e imágenes ----------
+     El producto se lleva en su unidad base (la de venta: und, kg…).
+     Una presentación dice cuántas unidades base trae (Caja x 24 = 24 und)
+     y si se usa para comprar, para vender o para ambas. */
+  `
+  CREATE TABLE presentaciones (
+    id TEXT PRIMARY KEY, producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
+    nombre TEXT NOT NULL, factor REAL NOT NULL, barra TEXT,
+    compra INTEGER NOT NULL DEFAULT 1, venta INTEGER NOT NULL DEFAULT 0,
+    costo_c INTEGER NOT NULL DEFAULT 0, precio_c INTEGER NOT NULL DEFAULT 0, activo INTEGER NOT NULL DEFAULT 1
+  );
+  CREATE INDEX presentaciones_producto ON presentaciones(producto_id);
+  CREATE INDEX presentaciones_barra ON presentaciones(barra);
+  CREATE TABLE producto_imagenes (
+    producto_id TEXT PRIMARY KEY REFERENCES productos(id) ON DELETE CASCADE,
+    imagen TEXT NOT NULL, actualizado TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+  );
+  ALTER TABLE compra_lineas ADD COLUMN presentacion_id TEXT;
+  ALTER TABLE compra_lineas ADD COLUMN presentacion TEXT;
+  ALTER TABLE compra_lineas ADD COLUMN factor REAL NOT NULL DEFAULT 1;
+  ALTER TABLE venta_lineas ADD COLUMN presentacion_id TEXT;
+  ALTER TABLE venta_lineas ADD COLUMN presentacion TEXT;
+  ALTER TABLE venta_lineas ADD COLUMN factor REAL NOT NULL DEFAULT 1;
   `
 ];

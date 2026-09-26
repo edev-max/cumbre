@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  export interface LineaEd { producto_id: string | null; descripcion: string; unidad: string; cantidad: string; precio: string; descuento: string; iva: number; existencia?: number }
+  export interface LineaEd { producto_id: string | null; descripcion: string; unidad: string; cantidad: string; precio: string; descuento: string; iva: number; existencia?: number; presentacion_id?: string | null; presentacion?: string | null; factor?: number; imagen?: string | null }
 </script>
 <script lang="ts">
   import { app } from '../estado.svelte';
@@ -7,6 +7,7 @@
   import { linea as calc, totales } from '../calculos';
   import BuscaProducto from './BuscaProducto.svelte';
   import Icono from './Icono.svelte';
+  import Foto from './Foto.svelte';
   /* líneas de un documento (nota de venta u orden de compra) */
   let { lineas = $bindable([]), modo = 'venta', almacen = '' }: { lineas?: LineaEd[]; modo?: 'venta' | 'compra'; almacen?: string } = $props();
   function aCalc(l: LineaEd) { return { cantidad: leerNumero(l.cantidad), precio_c: leerMonto(l.precio), descuento: leerNumero(l.descuento), impuesto_tasa: l.iva }; }
@@ -17,14 +18,17 @@
   <div class="glass tabla-wrap">
     <table class="tabla">
       <thead><tr>
-        <th>Producto</th><th class="r" style="width:110px">Cantidad</th><th class="r" style="width:120px">{modo === 'venta' ? 'Precio $' : 'Costo $'}</th>
+        <th>Producto</th><th class="r" style="width:110px">Cantidad</th><th class="r" style="width:120px">{modo === 'venta' ? 'Precio $' : 'Costo $'} c/u</th>
         {#if modo === 'venta'}<th class="r" style="width:80px">Desc. %</th>{/if}
         <th class="r" style="width:70px">IVA</th><th class="r" style="width:110px">Total</th><th style="width:40px"></th>
       </tr></thead>
       <tbody>
         {#each lineas as l, i}
           <tr>
-            <td><b>{l.descripcion}</b>{#if modo === 'venta' && l.existencia !== undefined}<br /><small class="mute">Hay {num(l.existencia)} {l.unidad}</small>{/if}</td>
+            <td><div class="prod"><Foto src={l.imagen} nombre={l.descripcion} size={32} radio={8} /><span><b>{l.descripcion}</b>
+              {#if l.presentacion}<br /><small class="rojo">{l.presentacion} · trae {num(l.factor || 1)} {l.unidad}{leerNumero(l.cantidad) ? ` · total ${num(leerNumero(l.cantidad) * (l.factor || 1))} ${l.unidad}` : ''}</small>
+              {:else}<br /><small class="mute">por {l.unidad}</small>{/if}
+              {#if modo === 'venta' && l.existencia !== undefined} <small class="mute">· hay {num(l.existencia)} {l.unidad}</small>{/if}</span></div></td>
             <td><input class="input num" bind:value={l.cantidad} inputmode="decimal" /></td>
             <td><input class="input num" bind:value={l.precio} inputmode="decimal" /></td>
             {#if modo === 'venta'}<td><input class="input num" bind:value={l.descuento} inputmode="decimal" /></td>{/if}
@@ -35,7 +39,7 @@
         {/each}
         <tr class="agregar"><td colspan={modo === 'venta' ? 7 : 6}>
           <BuscaProducto {almacen} compra={modo === 'compra'} placeholder="Agregar producto…"
-            alElegir={(p) => { const ya = lineas.find((x) => x.producto_id === p.id); if (ya) ya.cantidad = String(leerNumero(ya.cantidad) + 1); else lineas.push({ producto_id: p.id, descripcion: p.nombre, unidad: p.unidad, cantidad: '1', precio: montoEditable(modo === 'venta' ? p.precio_c : p.costo_c), descuento: '0', iva: p.iva, existencia: p.existencia }); }} />
+            alElegir={(p) => { const ya = lineas.find((x) => x.producto_id === p.id && (x.presentacion_id || null) === (p.presentacion_id || null)); if (ya) ya.cantidad = String(leerNumero(ya.cantidad) + 1); else lineas.push({ producto_id: p.id, descripcion: p.nombre, unidad: p.unidad, cantidad: '1', precio: montoEditable(modo === 'venta' ? p.precio_c : p.costo_c), descuento: '0', iva: p.iva, existencia: p.existencia, presentacion_id: p.presentacion_id, presentacion: p.presentacion, factor: p.factor || 1, imagen: p.imagen }); }} />
         </td></tr>
       </tbody>
     </table>
@@ -54,6 +58,7 @@
   .tabla-wrap { overflow: visible; }
   .tabla td .input { height: 32px; }
   .agregar td { padding: 12px 14px; }
+  .prod { display: flex; gap: 10px; align-items: center; }
   .tot { justify-self: end; width: min(360px, 100%); display: grid; gap: 6px; padding: 16px 18px; }
   .gran { padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--line); font-weight: 700; }
   .gran b { font-size: 22px; font-weight: 850; }

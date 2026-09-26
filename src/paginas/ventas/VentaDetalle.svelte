@@ -65,7 +65,7 @@
         <thead><tr><th>Producto</th><th class="r">Cantidad</th><th class="r">Precio</th><th class="r">Desc.</th><th class="r">IVA</th><th class="r">Total</th></tr></thead>
         <tbody>
           {#each lineas as l}
-            <tr><td class="fuerte">{l.descripcion}</td><td class="r">{num(l.cantidad)}</td><td class="r">{usd(l.precio_c)}</td><td class="r mute">{l.descuento ? l.descuento + ' %' : '—'}</td><td class="r mute">{l.impuesto_tasa ? l.impuesto_tasa + ' %' : 'E'}</td><td class="r fuerte">{usd(l.total_c)}</td></tr>
+            <tr><td class="fuerte">{l.descripcion}{#if l.presentacion} <small class="mute">· {l.presentacion}</small>{/if}</td><td class="r">{num(l.cantidad)}</td><td class="r">{usd(l.precio_c)}</td><td class="r mute">{l.descuento ? l.descuento + ' %' : '—'}</td><td class="r mute">{l.impuesto_tasa ? l.impuesto_tasa + ' %' : 'E'}</td><td class="r fuerte">{usd(l.total_c)}</td></tr>
           {/each}
           <tr><td colspan="5" class="r mute">Subtotal · IVA</td><td class="r">{usd(v.subtotal_c - v.descuento_c)} · {usd(v.impuesto_c)}</td></tr>
         </tbody>

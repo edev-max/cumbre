@@ -26,7 +26,7 @@
     const c = clientes.find((x) => x.id === cliente);
     if (c) { dias = String(c.dias_credito || 0); direccion = c.direccion || ''; }
   }
-  const lin = $derived(lineas.map((l) => ({ producto_id: l.producto_id, descripcion: l.descripcion, cantidad: leerNumero(l.cantidad), precio_c: leerMonto(l.precio), descuento: leerNumero(l.descuento), impuesto_tasa: l.iva })));
+  const lin = $derived(lineas.map((l) => ({ producto_id: l.producto_id, descripcion: l.descripcion, cantidad: leerNumero(l.cantidad), precio_c: leerMonto(l.precio), descuento: leerNumero(l.descuento), impuesto_tasa: l.iva, presentacion_id: l.presentacion_id, presentacion: l.presentacion, factor: l.factor || 1 })));
   const total = $derived(totales(lin).total_c);
   async function guardar(pagos: any[] = []) {
     if (!cliente) { avisar('Elige el cliente.', 'error'); return; }

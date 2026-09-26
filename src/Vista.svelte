@@ -16,6 +16,7 @@
   import Existencias from './paginas/inventario/Existencias.svelte';
   import Movimientos from './paginas/inventario/Movimientos.svelte';
   import Kardex from './paginas/inventario/Kardex.svelte';
+  import Productos from './paginas/inventario/Productos.svelte';
   import Despachos from './paginas/logistica/Despachos.svelte';
   import Empresa from './paginas/config/Empresa.svelte';
   import Tasas from './paginas/config/Tasas.svelte';
@@ -28,7 +29,7 @@
     inicio: Inicio,
     'ventas/pos': Pos, 'ventas/notas': Notas, 'ventas/cobranza': Cobranza, 'ventas/reportes': Reportes,
     'compras/ordenes': Ordenes, 'compras/recepciones': Recepciones, 'compras/pagar': Pagar,
-    'inventario/existencias': Existencias, 'inventario/movimientos': Movimientos, 'inventario/kardex': Kardex,
+    'inventario/productos': Productos, 'inventario/existencias': Existencias, 'inventario/movimientos': Movimientos, 'inventario/kardex': Kardex,
     'logistica/despachos': Despachos,
     'config/empresa': Empresa, 'config/tasas': Tasas, 'config/numeracion': Numeracion, 'config/respaldos': Respaldos, 'config/licencia': Licencia
   };

@@ -21,18 +21,23 @@
       const c = await uno<any>('SELECT * FROM compras WHERE id = ?', [id]);
       if (c) {
         proveedor = c.proveedor_id; almacen = c.almacen_id; factura = c.factura_proveedor || ''; notas = c.notas || ''; numero = c.numero;
-        lineas = (await q(`SELECT l.*, p.unidad FROM compra_lineas l LEFT JOIN productos p ON p.id = l.producto_id WHERE compra_id = ?`, [id]))
-          .map((l) => ({ producto_id: l.producto_id, descripcion: l.descripcion, unidad: l.unidad || 'und', cantidad: num(l.cantidad), precio: montoEditable(l.costo_c), descuento: '0', iva: l.impuesto_tasa }));
+        lineas = (await q(`SELECT l.*, p.unidad, (SELECT imagen FROM producto_imagenes pi WHERE pi.producto_id = l.producto_id) AS imagen FROM compra_lineas l LEFT JOIN productos p ON p.id = l.producto_id WHERE compra_id = ?`, [id]))
+          .map((l) => ({ producto_id: l.producto_id, descripcion: l.descripcion, unidad: l.unidad || 'und', cantidad: num(l.cantidad), precio: montoEditable(l.costo_c), descuento: '0', iva: l.impuesto_tasa, presentacion_id: l.presentacion_id, presentacion: l.presentacion, factor: l.factor || 1, imagen: l.imagen }));
       }
     }
     // sugerencia: lo que está por debajo del mínimo
   }
   async function sugerir() {
-    const bajos = await q(`SELECT p.id, p.nombre, p.unidad, p.costo_c, p.stock_min, COALESCE(i.tasa, 0) AS iva, COALESCE((SELECT SUM(cantidad) FROM stock s WHERE s.producto_id = p.id), 0) AS hay
-                           FROM productos p LEFT JOIN impuestos i ON i.id = p.impuesto_id WHERE p.activo = 1 AND p.se_compra = 1 AND p.stock_min > 0 AND hay <= p.stock_min`);
+    // se pide en la presentación de compra más grande, si hay; si no, por unidad
+    const bajos = await q(`SELECT p.id, p.nombre, p.unidad, p.costo_c, p.stock_min, COALESCE(i.tasa, 0) AS iva, COALESCE((SELECT SUM(cantidad) FROM stock s WHERE s.producto_id = p.id), 0) AS hay,
+                             pr.id AS pres_id, pr.nombre AS pres, pr.factor, pr.costo_c AS pres_costo, (SELECT imagen FROM producto_imagenes pi WHERE pi.producto_id = p.id) AS imagen
+                           FROM productos p LEFT JOIN impuestos i ON i.id = p.impuesto_id
+                           LEFT JOIN presentaciones pr ON pr.id = (SELECT x.id FROM presentaciones x WHERE x.producto_id = p.id AND x.compra = 1 AND x.activo = 1 ORDER BY x.factor DESC LIMIT 1)
+                           WHERE p.activo = 1 AND p.se_compra = 1 AND p.stock_min > 0 AND hay <= p.stock_min`);
     let n = 0;
     for (const b of bajos) if (!lineas.some((l) => l.producto_id === b.id)) {
-      lineas.push({ producto_id: b.id, descripcion: b.nombre, unidad: b.unidad, cantidad: String(Math.max(1, Math.ceil(b.stock_min * 2 - b.hay))), precio: montoEditable(b.costo_c), descuento: '0', iva: b.iva }); n++;
+      const f = b.factor || 1, falta = Math.max(1, b.stock_min * 2 - b.hay);
+      lineas.push({ producto_id: b.id, descripcion: b.nombre, unidad: b.unidad, cantidad: String(Math.max(1, Math.ceil(falta / f))), precio: montoEditable(b.pres_costo || Math.round(b.costo_c * f)), descuento: '0', iva: b.iva, presentacion_id: b.pres_id, presentacion: b.pres, factor: f, imagen: b.imagen }); n++;
     }
     avisar(n ? `Agregué ${n} productos por debajo del mínimo.` : 'No hay productos por debajo del mínimo.', 'info');
   }
@@ -43,7 +48,7 @@
       const r = await guardarOrden({
         id: id || undefined, proveedor_id: proveedor, almacen_id: almacen, factura_proveedor: factura, notas, estado,
         vence: ahora(Math.round(leerNumero(dias) || p?.dias_credito || 0)).slice(0, 10),
-        lineas: lineas.map((l) => ({ producto_id: l.producto_id, descripcion: l.descripcion, cantidad: leerNumero(l.cantidad), costo_c: leerMonto(l.precio), impuesto_tasa: l.iva }))
+        lineas: lineas.map((l) => ({ producto_id: l.producto_id, descripcion: l.descripcion, cantidad: leerNumero(l.cantidad), costo_c: leerMonto(l.precio), impuesto_tasa: l.iva, presentacion_id: l.presentacion_id, presentacion: l.presentacion, factor: l.factor || 1 }))
       });
       avisar(`Orden ${r.numero} guardada.`); refrescar(); ir('compras/ordenes/' + r.id);
     } catch (e) { fallo(e); } finally { guardando = false; }

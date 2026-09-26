@@ -8,9 +8,11 @@ Sistema administrativo para bodegas y pequeños negocios de Venezuela. Funciona 
 |---|---|
 | **Ventas** | Punto de venta (código de barras, cobro mixto $/Bs con vuelto), notas de venta (crédito y despacho), clientes, cobranza por antigüedad, reportes |
 | **Compras** | Órdenes de compra, recepciones (parciales, costo promedio), proveedores, cuentas por pagar |
-| **Inventario** | Productos, existencias por almacén, ajustes, conteo físico, traslados, kardex, categorías, almacenes |
+| **Inventario** | Productos con foto, código y presentaciones (caja, bulto, paquete…), existencias por almacén, ajustes, conteo físico, traslados, kardex, categorías, almacenes |
 | **Logística** | Tablero de despachos, rutas, transportistas |
 | **Configuración** | Empresa, tasa BCV, impuestos, métodos de pago, numeración, usuarios, respaldos, licencia |
+
+Cada producto se lleva en su unidad de venta (unidad, kilo…). Sus **presentaciones** dicen cuánto trae cada caja o bulto: se compra en la presentación del proveedor y, al recibir, Cumbre convierte cantidades y costos a la unidad de venta. Una presentación también puede venderse (al mayor), con su propio precio y código de barras.
 
 Los precios viven en dólares y los bolívares salen de la tasa BCV; cada documento guarda la tasa de su día. Los documentos son **no fiscales** (tickets y notas de entrega).
 
@@ -33,7 +35,15 @@ npm test             # pruebas de cálculos
 npm run check        # tipos
 ```
 
-El instalador de Windows lo arma GitHub Actions (`.github/workflows/windows.yml`) en cada cambio a `main`: se descarga desde la pestaña **Actions → Instalador de Windows → Artifacts**. Con una etiqueta `v0.1.0` se crea además un borrador de release.
+### Instalador de Windows
+
+Desde Linux (o WSL), con `mingw-w64`, `nsis` y el target de Rust `x86_64-pc-windows-gnu`:
+
+```bash
+npm run instalador   # deja instalador/Cumbre-<versión>-instalador.exe
+```
+
+También lo arma GitHub Actions (`.github/workflows/windows.yml`) en cada cambio a `main`: se descarga desde la pestaña **Actions → Instalador de Windows → Artifacts**. Con una etiqueta `v0.1.0` se crea además un borrador de release.
 
 ## Usuarios y roles
 

@@ -4,7 +4,8 @@ import { linea as calcLinea, totales, aCentavosUsd, costoPromedio } from '../cal
 import { ahora } from '../formato';
 import { sStock, sMov, quien } from './comun';
 
-export interface LineaCompra { id?: string; producto_id: string | null; descripcion: string; cantidad: number; costo_c: number; impuesto_tasa: number }
+/** cantidad y costo van en la presentación de compra (factor = unidades base que trae) */
+export interface LineaCompra { id?: string; producto_id: string | null; descripcion: string; cantidad: number; costo_c: number; impuesto_tasa: number; presentacion_id?: string | null; presentacion?: string | null; factor?: number }
 export interface OrdenIn {
   id?: string; proveedor_id: string; almacen_id: string; factura_proveedor?: string; vence?: string | null; notas?: string;
   estado: 'borrador' | 'ordenada'; lineas: LineaCompra[]; fecha?: string;
@@ -45,8 +46,8 @@ export async function guardarOrden(o: OrdenIn): Promise<{ id: string; numero: st
     });
   }
   for (const l of lineas) S.push({
-    sql: `INSERT INTO compra_lineas (id, compra_id, producto_id, descripcion, cantidad, costo_c, impuesto_tasa, total_c) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    params: [uid(), id, l.producto_id, l.descripcion, l.cantidad, l.costo_c, l.impuesto_tasa, calcLinea(aCalc(l)).total_c]
+    sql: `INSERT INTO compra_lineas (id, compra_id, producto_id, descripcion, cantidad, costo_c, impuesto_tasa, total_c, presentacion_id, presentacion, factor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    params: [uid(), id, l.producto_id, l.descripcion, l.cantidad, l.costo_c, l.impuesto_tasa, calcLinea(aCalc(l)).total_c, l.presentacion_id || null, l.presentacion || null, l.factor || 1]
   });
   await lote(S);
   return { id: id!, numero };
@@ -86,12 +87,15 @@ export async function recibir(compra_id: string, recibe: RecibirLinea[], almacen
     if (r.costo_c !== l.costo_c) { l.costo_c = r.costo_c; l.total_c = calcLinea({ cantidad: l.cantidad, precio_c: l.costo_c, impuesto_tasa: l.impuesto_tasa }).total_c; }
     S.push({ sql: 'UPDATE compra_lineas SET recibido = ?, costo_c = ?, total_c = ? WHERE id = ?', params: [l.recibido, l.costo_c, l.total_c, l.id] });
     if (l.producto_id) {
-      const i = info.get(l.producto_id) || { hay: 0, costo: r.costo_c };
-      const nuevo = costoPromedio(i.hay, i.costo, r.cantidad, r.costo_c);
-      info.set(l.producto_id, { hay: i.hay + r.cantidad, costo: nuevo });
+      // la presentación se convierte a unidades base: 2 cajas x 24 = 48 und, a costo / 24
+      const f = l.factor || 1, entra = r.cantidad * f, costoBase = Math.round(r.costo_c / f);
+      const i = info.get(l.producto_id) || { hay: 0, costo: costoBase };
+      const nuevo = costoPromedio(i.hay, i.costo, entra, costoBase);
+      info.set(l.producto_id, { hay: i.hay + entra, costo: nuevo });
       S.push({ sql: 'UPDATE productos SET costo_c = ? WHERE id = ?', params: [nuevo, l.producto_id] });
-      S.push(sStock(l.producto_id, alm, r.cantidad));
-      S.push(sMov({ id: uid(), fecha: cuando, tipo: 'compra', producto_id: l.producto_id, almacen_id: alm, cantidad: r.cantidad, costo_c: r.costo_c, ref_tipo: 'compra', ref_id: compra_id, ref_numero: c.numero }));
+      if (l.presentacion_id) S.push({ sql: 'UPDATE presentaciones SET costo_c = ? WHERE id = ?', params: [r.costo_c, l.presentacion_id] });
+      S.push(sStock(l.producto_id, alm, entra));
+      S.push(sMov({ id: uid(), fecha: cuando, tipo: 'compra', producto_id: l.producto_id, almacen_id: alm, cantidad: entra, costo_c: costoBase, ref_tipo: 'compra', ref_id: compra_id, ref_numero: c.numero, nota: l.presentacion ? `${r.cantidad} × ${l.presentacion}` : undefined }));
     }
   }
   const t = totales(lineas.map((l) => ({ cantidad: l.cantidad, precio_c: l.costo_c, impuesto_tasa: l.impuesto_tasa })));
