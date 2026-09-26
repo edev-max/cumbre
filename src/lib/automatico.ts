@@ -8,15 +8,15 @@ async function invocar<T>(cmd: string, args?: Record<string, unknown>): Promise<
   return invoke<T>(cmd, args);
 }
 
-export interface TasaBcv { valor: number; fecha: string }
+export interface TasaBcv { valor: number; fecha: string; fuente: string }
 
 /** consulta al BCV y registra la tasa si es nueva. Devuelve lo que leyó. */
 export async function actualizarTasaBcv(avisarSiCambia = false): Promise<TasaBcv> {
   const t = await invocar<TasaBcv>('tasa_bcv');
   const rige = (t.fecha || ahora().slice(0, 10)) + ' 00:00:00';
-  const ya = await q(`SELECT 1 FROM tasas WHERE fuente = 'bcv' AND substr(fecha, 1, 10) = ? AND ABS(valor - ?) < 0.00001`, [rige.slice(0, 10), t.valor]);
+  const ya = await q(`SELECT 1 FROM tasas WHERE fuente IN ('bcv', 'dolarapi') AND substr(fecha, 1, 10) = ? AND ABS(valor - ?) < 0.00001`, [rige.slice(0, 10), t.valor]);
   if (!ya.length) {
-    await exec('INSERT INTO tasas (id, fecha, valor, fuente) VALUES (?, ?, ?, ?)', [uid(), rige, t.valor, 'bcv']);
+    await exec('INSERT INTO tasas (id, fecha, valor, fuente) VALUES (?, ?, ?, ?)', [uid(), rige, t.valor, t.fuente || 'bcv']);
     if (avisarSiCambia) avisar(`Tasa BCV ${t.valor.toLocaleString('es-VE')} Bs/$${t.fecha ? ', rige desde el ' + t.fecha.split('-').reverse().join('/') : ''}.`, 'info');
   }
   await ajuste('tasa_auto_ultima', ahora());

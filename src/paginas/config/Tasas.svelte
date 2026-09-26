@@ -13,7 +13,7 @@
   const auto = $derived(app.ajustes.tasa_auto !== '0');
   async function traer() {
     consultando = true;
-    try { const t = await actualizarTasaBcv(); avisar(`BCV: ${num(t.valor)} Bs/$${t.fecha ? ' (rige desde ' + fecha(t.fecha) + ')' : ''}.`); }
+    try { const t = await actualizarTasaBcv(); avisar(`${t.fuente === 'dolarapi' ? 'Tasa oficial (vía DolarAPI)' : 'BCV'}: ${num(t.valor)} Bs/$${t.fecha ? ' (rige desde ' + fecha(t.fecha) + ')' : ''}.`); }
     catch (e) { await ajuste('tasa_auto_error', String(e)).catch(() => {}); fallo(e); }
     finally { consultando = false; }
   }
@@ -57,7 +57,7 @@
   </div>
   <div class="glass">
     <Tabla filas={filas} vacio="Sin historial."
-      cols={[{ k: 'fecha', t: 'Rige desde', f: (t) => fechaHora(t.fecha) }, { k: 'valor', t: 'Tasa', al: 'r', f: (t) => num(t.valor) + ' Bs/$', clase: () => 'fuerte' }, { k: 'fuente', t: 'Fuente', f: (t) => (t.fuente === 'bcv' ? 'BCV (automática)' : 'Manual') }]} />
+      cols={[{ k: 'fecha', t: 'Rige desde', f: (t) => fechaHora(t.fecha) }, { k: 'valor', t: 'Tasa', al: 'r', f: (t) => num(t.valor) + ' Bs/$', clase: () => 'fuerte' }, { k: 'fuente', t: 'Fuente', f: (t) => (t.fuente === 'bcv' ? 'BCV (automática)' : t.fuente === 'dolarapi' ? 'BCV vía DolarAPI (automática)' : 'Manual') }]} />
   </div>
 </Pagina>
 
