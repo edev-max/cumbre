@@ -47,6 +47,6 @@
   h1 { font-size: 24px; }
   .usuarios { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
   .u { display: grid; justify-items: center; gap: 6px; padding: 14px 8px; border-radius: 16px; }
-  .u.on { border-color: rgba(255, 106, 64, 0.6); }
+  .u.on { border-color: rgba(var(--acento-2-rgb), 0.6); }
   .av { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--hover); font-weight: 800; font-size: 16px; }
 </style>

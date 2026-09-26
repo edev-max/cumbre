@@ -31,7 +31,7 @@ export async function documentoVenta(id: string, formato: 'ticket' | 'carta' = '
     td { padding: 3px 0; vertical-align: top; } .r { text-align: right; white-space: nowrap; } small { color: #444; }
     .tot td { font-weight: 700; border-top: 1px dashed #000; } hr { border: 0; border-top: 1px dashed #000; } .c { text-align: center; }
   </style></head><body>
-    <div class="c"><h1>${esc(a.empresa_nombre)}</h1><p>RIF ${esc(a.empresa_rif)}</p>${a.empresa_direccion ? `<p>${esc(a.empresa_direccion)}</p>` : ''}${a.empresa_telefono ? `<p>${esc(a.empresa_telefono)}</p>` : ''}</div>
+    <div class="c">${a.marca_logo ? `<img src="${a.marca_logo}" style="max-height:56px;max-width:60%;margin-bottom:4px">` : ''}<h1>${esc(a.empresa_nombre)}</h1><p>RIF ${esc(a.empresa_rif)}</p>${a.empresa_direccion ? `<p>${esc(a.empresa_direccion)}</p>` : ''}${a.empresa_telefono ? `<p>${esc(a.empresa_telefono)}</p>` : ''}</div>
     <hr><p><b>${v.origen === 'pos' ? 'Ticket' : 'Nota de venta'} ${esc(v.numero)}</b></p><p>${fechaHora(v.fecha)}</p>
     <p>Cliente: ${esc(v.cliente)}${v.cliente_rif ? ' · ' + esc(v.cliente_rif) : ''}</p>
     <table>${filas}</table>

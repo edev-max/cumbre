@@ -1,12 +1,34 @@
 <script lang="ts">
-  import { exportarDb, importarDb, tipoDriver } from '../../lib/db';
-  import { app, avisar, fallo, confirmar, cargarAjustes, refrescar } from '../../lib/estado.svelte';
+  import { exportarDb, importarDb, tipoDriver, enEscritorio } from '../../lib/db';
+  import { sugerirCarpetas, respaldarAhora, type CarpetaSugerida } from '../../lib/automatico';
+  import { app, avisar, fallo, confirmar, cargarAjustes, refrescar, ajuste } from '../../lib/estado.svelte';
   import { borrarDatos } from '../../lib/servicios/datos';
-  import { hoy } from '../../lib/formato';
+  import { hoy, fechaHora } from '../../lib/formato';
   import Pagina from '../../lib/ui/Pagina.svelte';
   import Icono from '../../lib/ui/Icono.svelte';
 
   let archivo: HTMLInputElement;
+  const escritorio = enEscritorio();
+  let sugeridas = $state<CarpetaSugerida[]>([]), respaldando = $state(false);
+  $effect(() => { if (escritorio) sugerirCarpetas().then((s) => (sugeridas = s)).catch(() => {}); });
+  const drive = $derived(sugeridas.find((c) => c.nombre === 'Google Drive'));
+  const actual = $derived(app.ajustes.respaldo_carpeta || '');
+  const auto = $derived(app.ajustes.respaldo_auto !== '0');
+  async function usarCarpeta(ruta: string) {
+    await ajuste('respaldo_carpeta', ruta);
+    await ahoraMismo();
+  }
+  async function elegirOtra() {
+    const { open } = await import('@tauri-apps/plugin-dialog');
+    const r = await open({ directory: true, title: 'Carpeta para los respaldos de Cumbre' });
+    if (typeof r === 'string' && r) await usarCarpeta(r);
+  }
+  async function ahoraMismo() {
+    respaldando = true;
+    try { const h = await respaldarAhora(); avisar(`Respaldo guardado: ${h.archivo} (${Math.round(h.bytes / 1024)} KB). Hay ${h.guardados} copias.`); }
+    catch (e) { fallo(e); }
+    finally { respaldando = false; }
+  }
   async function descargar() {
     try {
       const datos = await exportarDb();
@@ -35,6 +57,42 @@
 </script>
 
 <Pagina titulo="Respaldos" desc="Tu información vive en esta computadora. Respáldala seguido.">
+  <div class="glass card stack auto">
+    <div class="row"><Icono n="respaldo" size={24} /><h2>Respaldo automático</h2><span class="spacer"></span>
+      {#if escritorio && actual}<label class="interruptor" title="Respaldo automático"><input type="checkbox" checked={auto} onchange={(e) => ajuste('respaldo_auto', e.currentTarget.checked ? '1' : '0')} /><span></span></label>{/if}
+    </div>
+    {#if !escritorio}
+      <p class="dim">Disponible en la aplicación de escritorio.</p>
+    {:else}
+      <p class="dim">Cumbre guarda una copia al abrir y cada 12 horas mientras está abierto, y conserva las últimas 30. Si la carpeta es de <b>Google Drive</b>, la copia sube sola a tu Drive: no hay que iniciar sesión en Cumbre.</p>
+      {#if actual}
+        <div class="destino glass glass--flat">
+          <span><small class="mute">Se guarda en</small><b>{actual}{actual.endsWith('\\') || actual.endsWith('/') ? '' : '\\'}Cumbre respaldos</b>
+            <small class="mute">{app.ajustes.respaldo_ultimo ? 'Último respaldo: ' + fechaHora(app.ajustes.respaldo_ultimo) : 'Todavía sin respaldos'}</small>
+            {#if app.ajustes.respaldo_error}<small class="bad">{app.ajustes.respaldo_error}</small>{/if}</span>
+          <button class="btn btn--primary" onclick={ahoraMismo} disabled={respaldando}>{respaldando ? 'Guardando…' : 'Respaldar ahora'}</button>
+        </div>
+      {/if}
+      <div class="opciones">
+        {#each sugeridas as c}
+          <button class="op glass glass--flat" class:on={actual === c.ruta} onclick={() => usarCarpeta(c.ruta)}>
+            <b>{c.nombre}</b><small class="mute">{c.ruta}</small>{#if c.nube}<span class="tag tag--ok">Sube a la nube</span>{/if}
+          </button>
+        {/each}
+        <button class="op glass glass--flat" onclick={elegirOtra}><b>Otra carpeta…</b><small class="mute">Un pendrive, un disco externo o una carpeta de red</small></button>
+      </div>
+      {#if !drive}
+        <div class="guia glass glass--flat">
+          <b>¿Quieres que suba a Google Drive?</b>
+          <ol>
+            <li>Instala <a href="https://www.google.com/drive/download/" target="_blank" rel="noopener">Google Drive para computadoras</a> (gratis) y entra con tu cuenta de Google.</li>
+            <li>Vuelve a esta pantalla: aparecerá la opción <b>Google Drive</b>. Tócala y listo.</li>
+          </ol>
+          <small class="mute">Los respaldos quedarán en tu Drive, en la carpeta "Cumbre respaldos", y los puedes bajar desde cualquier computadora o el teléfono.</small>
+        </div>
+      {/if}
+    {/if}
+  </div>
   <div class="tres">
     <div class="glass card stack">
       <Icono n="bajar" size={26} />
@@ -62,4 +120,14 @@
 <style>
   .tres { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .tres > div { align-content: start; }
+  .destino { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; }
+  .destino span { flex: 1; display: grid; gap: 2px; min-width: 0; }
+  .destino b { overflow-wrap: anywhere; }
+  .opciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+  .op { display: grid; gap: 4px; justify-items: start; padding: 12px 14px; border-radius: 14px; text-align: left; }
+  .op small { overflow-wrap: anywhere; }
+  .op.on { border-color: var(--acento-2); }
+  .guia { display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px; }
+  .guia ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+  .guia a { color: var(--acento-2); font-weight: 600; }
 </style>

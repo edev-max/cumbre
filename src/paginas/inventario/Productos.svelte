@@ -245,7 +245,7 @@
   .drop__t { position: absolute; left: 8px; right: 8px; bottom: 8px; padding: 5px 0; border-radius: 9px; text-align: center; font-size: 11.5px; font-weight: 650;
     background: rgba(7, 11, 23, 0.55); color: #fff; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.2s; }
   .drop:hover .drop__t, .drop.arr .drop__t, .drop:focus-visible .drop__t { opacity: 1; }
-  .drop.arr { outline: 2px dashed var(--rojo-2); }
+  .drop.arr { outline: 2px dashed var(--acento-2); }
   .tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .resumen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px 14px; border-radius: 14px; }
   .resumen span { display: grid; gap: 2px; }
@@ -256,5 +256,5 @@
   .pfila { display: grid; grid-template-columns: 1.3fr 0.8fr 1.1fr auto 1fr 30px; gap: 8px; align-items: end; padding: 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); }
   .usos { display: grid; gap: 4px; padding-bottom: 4px; font-size: 12.5px; }
   .vacia { font-size: 12.5px; }
-  .lnk { border: 0; background: none; padding: 0; color: var(--rojo-2); font-weight: 600; font-size: inherit; cursor: pointer; }
+  .lnk { border: 0; background: none; padding: 0; color: var(--acento-2); font-weight: 600; font-size: inherit; cursor: pointer; }
 </style>

@@ -60,7 +60,7 @@
   .mod__b:hover { background: var(--hover); color: var(--ink); }
   .mod.activo > .mod__b { color: var(--ink); background: var(--hover); }
   .mod__i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; }
-  .mod.activo .mod__i { background: linear-gradient(180deg, #FF5A2E, #E8380D); color: #fff; box-shadow: 0 6px 14px -6px rgba(232, 56, 13, 0.9), inset 0 1px 0 rgba(255,255,255,.35); }
+  .mod.activo .mod__i { background: linear-gradient(180deg, var(--acento-2), var(--acento)); color: #fff; box-shadow: 0 6px 14px -6px rgba(var(--acento-rgb), 0.9), inset 0 1px 0 rgba(255,255,255,.35); }
   .mod__t { flex: 1; }
   .mod__f { color: var(--ink-3); transition: transform var(--t); display: grid; }
   .mod__f.gira { transform: rotate(180deg); }
@@ -69,7 +69,7 @@
   .sub { display: block; padding: 7px 10px; border-radius: 9px; color: var(--ink-3); text-decoration: none; font-size: 13px; font-weight: 550; position: relative; }
   .sub:hover { color: var(--ink); background: var(--hover); }
   .sub.activo { color: var(--ink); background: var(--hover); }
-  .sub.activo::before { content: ''; position: absolute; left: -27px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; background: var(--rojo); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .sub.activo::before { content: ''; position: absolute; left: -27px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; background: var(--acento); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   .lat__pie { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--line); }
   .lic { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--ok); text-decoration: none; }
   .lic.demo { color: var(--warn); }

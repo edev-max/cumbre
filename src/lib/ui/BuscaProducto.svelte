@@ -67,7 +67,7 @@
   .res button.on { background: var(--hover); }
   .n { flex: 1; display: grid; min-width: 0; }
   .n b { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .n em { font-style: normal; color: var(--rojo-2); }
+  .n em { font-style: normal; color: var(--acento-2); }
   .n small { color: var(--ink-3); font-size: 11.5px; }
   .s { font-size: 12px; white-space: nowrap; }
   .p { font-weight: 700; font-variant-numeric: tabular-nums; }

@@ -41,6 +41,7 @@ export const MODULOS: Modulo[] = [
   {
     id: 'config', nombre: 'Configuración', icono: 'config', subs: [
       { id: 'empresa', nombre: 'Empresa', icono: 'empresa', desc: 'Nombre, RIF y datos de tus documentos.' },
+      { id: 'personalizar', nombre: 'Personalización', icono: 'tema', desc: 'Tu logo, tu fondo y tu color.' },
       { id: 'tasas', nombre: 'Tasa BCV', icono: 'tasa', desc: 'Tasa del día e historial.' },
       { id: 'impuestos', nombre: 'Impuestos', icono: 'impuesto', desc: 'IVA general, reducido y exento.' },
       { id: 'metodos', nombre: 'Métodos de pago', icono: 'metodo', desc: 'Efectivo, pago móvil, punto, Zelle…' },
@@ -60,7 +61,7 @@ export function buscarSub(mod: string, sub: string) {
 /* qué ve cada rol: módulo completo ("ventas") o submódulo ("ventas/pos") */
 export const PERMISOS: Record<string, string[]> = {
   admin: ['*'],
-  gerente: ['inicio', 'ventas', 'compras', 'inventario', 'logistica', 'config/empresa', 'config/tasas', 'config/respaldos'],
+  gerente: ['inicio', 'ventas', 'compras', 'inventario', 'logistica', 'config/empresa', 'config/personalizar', 'config/tasas', 'config/respaldos'],
   cajero: ['ventas/pos', 'ventas/notas', 'ventas/clientes', 'ventas/cobranza', 'config/tasas'],
   almacen: ['inventario', 'compras/recepciones', 'compras/ordenes', 'logistica']
 };

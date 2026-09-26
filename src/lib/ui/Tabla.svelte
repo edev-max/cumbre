@@ -48,5 +48,5 @@
 <style>
   .t-wrap { overflow: auto; border-radius: inherit; }
   th { cursor: pointer; }
-  .flecha { margin-left: 4px; color: var(--rojo-2); }
+  .flecha { margin-left: 4px; color: var(--acento-2); }
 </style>

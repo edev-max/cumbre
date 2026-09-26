@@ -19,6 +19,7 @@
   import Productos from './paginas/inventario/Productos.svelte';
   import Despachos from './paginas/logistica/Despachos.svelte';
   import Empresa from './paginas/config/Empresa.svelte';
+  import Personalizar from './paginas/config/Personalizar.svelte';
   import Tasas from './paginas/config/Tasas.svelte';
   import Numeracion from './paginas/config/Numeracion.svelte';
   import Respaldos from './paginas/config/Respaldos.svelte';
@@ -31,7 +32,7 @@
     'compras/ordenes': Ordenes, 'compras/recepciones': Recepciones, 'compras/pagar': Pagar,
     'inventario/productos': Productos, 'inventario/existencias': Existencias, 'inventario/movimientos': Movimientos, 'inventario/kardex': Kardex,
     'logistica/despachos': Despachos,
-    'config/empresa': Empresa, 'config/tasas': Tasas, 'config/numeracion': Numeracion, 'config/respaldos': Respaldos, 'config/licencia': Licencia
+    'config/empresa': Empresa, 'config/personalizar': Personalizar, 'config/tasas': Tasas, 'config/numeracion': Numeracion, 'config/respaldos': Respaldos, 'config/licencia': Licencia
   };
   const clave = $derived(ruta.partes.slice(0, 2).join('/') || 'inicio');
   const sub = $derived(ruta.partes[1] || '');

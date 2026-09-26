@@ -51,7 +51,7 @@
   .grid { stroke: var(--line); stroke-width: 1; }
   .eje { fill: var(--ink-3); font-size: 11px; font-variant-numeric: tabular-nums; }
   .bar { fill: var(--info); opacity: 0.85; transition: opacity 0.15s; }
-  .bar.ultima { fill: var(--rojo-2); opacity: 1; }
+  .bar.ultima { fill: var(--acento-2); opacity: 1; }
   .bar.tenue { opacity: 0.35; }
   rect { cursor: default; }
   .tip { position: absolute; pointer-events: none; width: 150px; display: grid; gap: 1px; padding: 8px 10px; border-radius: 10px; background: var(--glass-solid); font-size: 12px; }

@@ -21,8 +21,15 @@ export async function cargarAjustes() {
   app.ajustes = a;
   app.tema = (a.tema as any) || 'noche';
   document.documentElement.dataset.theme = app.tema;
-  const t = await uno<{ valor: number; fecha: string }>('SELECT valor, fecha FROM tasas ORDER BY fecha DESC LIMIT 1');
+  (await import('./marca')).aplicarMarca();
+  await recargarTasa();
+}
+/** la tasa vigente: la última cuya fecha ya llegó (el BCV publica en la tarde la del día siguiente) */
+export async function recargarTasa() {
+  const t = await uno<{ valor: number; fecha: string }>(`SELECT valor, fecha FROM tasas WHERE fecha <= datetime('now','localtime') ORDER BY fecha DESC, rowid DESC LIMIT 1`);
+  const antes = app.tasa;
   app.tasa = t?.valor || 0; app.tasaFecha = t?.fecha || '';
+  if (antes !== app.tasa) refrescar();
 }
 export async function ajuste(clave: string, valor: string) {
   await exec('INSERT INTO ajustes (clave, valor) VALUES (?, ?) ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor', [clave, valor]);

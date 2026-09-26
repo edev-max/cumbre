@@ -72,9 +72,16 @@ npm run licencia -- emitir --cliente "Bodega La Esquina" --rif J-12345678-9 \
 
 Se imprime un texto `CUMBRE-…` que el cliente pega en Configuración → Licencia.
 
+## Automático
+
+- **Tasa BCV:** en el escritorio, Cumbre lee la página del BCV al abrir y cada 3 horas (`src-tauri/src/bcv.rs`). Guarda la tasa con su fecha valor y la empieza a usar ese día. Se puede apagar y escribir a mano en Configuración → Tasa BCV.
+- **Respaldos:** una copia al abrir y cada 12 horas, conservando las últimas 30, en la carpeta que elija el cliente (`src-tauri/src/respaldo.rs`). Cumbre detecta **Google Drive para computadoras** ("Mi unidad") y OneDrive: si la carpeta es de Drive, la copia sube sola a la nube, sin iniciar sesión en Cumbre.
+
+## Personalización
+
+Configuración → Personalización: logo del negocio (barra lateral, entrada y tickets), imagen de fondo (se atenúa para que el vidrio se lea) y color de acento. El triángulo rojo del logo de Cumbre queda fijo: es la firma de Apex.
+
 ## Pendiente
 
-- Servidor de licencias en `cumbre.apexconsultingve.com` para renovar en línea y desactivar licencias a distancia.
-- Tasa BCV automática.
-- Respaldo automático en la nube.
+- Servidor de licencias en `cumbre.apexconsultingve.com` para renovar en línea y desactivar licencias a distancia; la tasa BCV pasaría a leerse desde ahí.
 - Integración con máquina fiscal o proveedor autorizado por el SENIAT.

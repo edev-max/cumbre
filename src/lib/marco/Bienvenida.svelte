@@ -4,6 +4,13 @@
   import { fallo, refrescar } from '../estado.svelte';
   import Marca from './Marca.svelte';
   import Icono from '../ui/Icono.svelte';
+  import { enEscritorio } from '../db';
+  let trayendo = $state(false);
+  async function traerBcv() {
+    trayendo = true; error = '';
+    try { const { invoke } = await import('@tauri-apps/api/core'); const t = await invoke<{ valor: number }>('tasa_bcv'); tasa = t.valor.toFixed(2).replace('.', ','); }
+    catch (e) { error = String(e); } finally { trayendo = false; }
+  }
   let { listo }: { listo: () => void } = $props();
   let nombre = $state(''), rif = $state(''), telefono = $state(''), tasa = $state(''), ejemplo = $state(true);
   let trabajando = $state(false), error = $state('');
@@ -32,7 +39,7 @@
       <label class="field full"><span>Nombre del negocio</span><input class="input" bind:value={nombre} placeholder="Ej.: Bodega La Esquina" disabled={ejemplo} /></label>
       <label class="field"><span>RIF</span><input class="input" bind:value={rif} placeholder="J-00000000-0" disabled={ejemplo} /></label>
       <label class="field"><span>Teléfono</span><input class="input" bind:value={telefono} placeholder="0412-0000000" disabled={ejemplo} /></label>
-      <label class="field full"><span>Tasa BCV de hoy (Bs por dólar)</span><input class="input num" inputmode="decimal" bind:value={tasa} placeholder="Ej.: 150,25" /><small>La puedes actualizar cada día en la barra de arriba.</small></label>
+      <label class="field full"><span>Tasa BCV de hoy (Bs por dólar)</span><div class="row"><input class="input num" inputmode="decimal" bind:value={tasa} placeholder="Ej.: 150,25" />{#if enEscritorio()}<button type="button" class="btn" onclick={traerBcv} disabled={trayendo}>{trayendo ? 'Consultando…' : 'Traer del BCV'}</button>{/if}</div><small>{enEscritorio() ? 'Luego Cumbre la actualiza sola desde el BCV.' : 'La puedes actualizar cada día en la barra de arriba.'}</small></label>
     </div>
     <label class="opcion glass glass--flat" class:on={ejemplo}>
       <input type="checkbox" bind:checked={ejemplo} />
@@ -49,8 +56,8 @@
   .t { display: grid; gap: 8px; }
   h1 { font-size: 30px; font-weight: 850; }
   .opcion { display: flex; gap: 12px; padding: 14px; border-radius: 16px; cursor: pointer; }
-  .opcion.on { border-color: rgba(255, 106, 64, 0.5); }
-  .opcion input { margin-top: 3px; accent-color: var(--rojo); width: 16px; height: 16px; flex: none; }
+  .opcion.on { border-color: rgba(var(--acento-2-rgb), 0.5); }
+  .opcion input { margin-top: 3px; accent-color: var(--acento); width: 16px; height: 16px; flex: none; }
   .opcion span { display: grid; gap: 3px; }
   .opcion small { color: var(--ink-3); font-size: 12px; }
 </style>

@@ -11,6 +11,7 @@
   import Bienvenida from './lib/marco/Bienvenida.svelte';
   import Vista from './Vista.svelte';
   import { iniciarLicencia } from './lib/licencia';
+  import { iniciarAutomatico } from './lib/automatico';
 
   let fase = $state<'cargando' | 'bienvenida' | 'entrar' | 'lista' | 'error'>('cargando');
   // si algún usuario tiene clave, se entra eligiendo usuario; si no, abre como administrador
@@ -32,6 +33,7 @@
       if (!iniciado) { fase = 'bienvenida'; return; }
       await cargarAjustes();
       await iniciarLicencia();
+      iniciarAutomatico();
       await sesionInicial();
     } catch (e) {
       app.error = e instanceof Error ? e.message : String(e);
@@ -48,7 +50,7 @@
 {:else if fase === 'entrar'}
   <Entrar listo={() => (fase = 'lista')} />
 {:else if fase === 'bienvenida'}
-  <Bienvenida listo={async () => { await iniciarLicencia(); fase = 'lista'; }} />
+  <Bienvenida listo={async () => { await iniciarLicencia(); iniciarAutomatico(); fase = 'lista'; }} />
 {:else}
   <div class="marco">
     <Lateral />

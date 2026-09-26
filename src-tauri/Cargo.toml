@@ -1,6 +1,6 @@
 [package]
 name = "cumbre"
-version = "0.1.0"
+version = "0.2.0"
 description = "Cumbre, by Apex Consulting"
 authors = ["Apex Consulting"]
 edition = "2021"
@@ -22,6 +22,11 @@ base64 = "0.22"
 sha2 = "0.10"
 machine-uid = "0.5"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+tauri-plugin-dialog = "2"
+# HTTP para la tasa del BCV: TLS del sistema (SChannel en Windows), que completa
+# solo la cadena de certificados del BCV
+ureq = { version = "2", default-features = false, features = ["native-tls"] }
+native-tls = "0.2"
 
 [profile.release]
 codegen-units = 1

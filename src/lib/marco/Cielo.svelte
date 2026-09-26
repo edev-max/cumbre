@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { app } from '../estado.svelte';
   /* el fondo: cielo nocturno del Ávila con la cresta del logo; el vidrio lo refracta */
   const R = 'M-40 176 L8 176 L120 140 L190 112 L228 84 L242 94 L252 78 L268 96 L290 64 L318 86 L390 132 L470 164 L512 176 L560 176';
   let estrellas = Array.from({ length: 70 }, (_, i) => {
@@ -9,6 +10,11 @@
 </script>
 
 <div class="cielo" aria-hidden="true">
+  {#if app.ajustes.marca_fondo}
+    <!-- fondo del cliente: atenuado para que el vidrio se siga leyendo -->
+    <img class="propio" src={app.ajustes.marca_fondo} alt="" />
+    <div class="velo"></div>
+  {:else}
   <div class="brillo brillo--a"></div>
   <div class="brillo brillo--b"></div>
   {#each estrellas as e}<i style="left:{e.x}%;top:{e.y}%;opacity:{e.o};width:{e.s}px;height:{e.s}px"></i>{/each}
@@ -17,6 +23,7 @@
     <path class="cresta" d={R} />
     <path class="apex" d="M290 50 L284 60 L296 60 Z" />
   </svg>
+  {/if}
 </div>
 
 <style>
@@ -31,4 +38,6 @@
   :global([data-theme='papel']) .mtn { fill: rgba(7, 11, 23, 0.04); }
   .cresta { fill: none; stroke: var(--ridge); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
   .apex { fill: var(--rojo); opacity: 0.8; }
+  .propio { position: absolute; inset: -20px; width: calc(100% + 40px); height: calc(100% + 40px); object-fit: cover; filter: blur(6px) saturate(1.1); }
+  .velo { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in oklab, var(--bg) 62%, transparent), color-mix(in oklab, var(--bg) 78%, transparent)); }
 </style>

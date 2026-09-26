@@ -147,7 +147,7 @@
   .chip.on { background: var(--ink); color: var(--bg); border-color: transparent; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); grid-auto-rows: auto; gap: 12px; align-content: start; overflow: auto; padding: 2px 4px 8px 2px; }
   .prod { display: grid; grid-template-rows: auto auto auto auto auto; gap: 2px; text-align: left; padding: 8px 8px 12px; border-radius: 18px; height: auto; align-content: start; transition: transform 0.15s var(--ease), border-color 0.2s; }
-  .prod:hover { transform: translateY(-2px); border-color: rgba(255, 106, 64, 0.45); }
+  .prod:hover { transform: translateY(-2px); border-color: rgba(var(--acento-2-rgb), 0.45); }
   .prod:active { transform: scale(0.98); }
   .pf { position: relative; display: block; margin-bottom: 6px; }
   .pf :global(.foto) { aspect-ratio: 4 / 3; }
@@ -162,7 +162,7 @@
   .bs { height: 50px; border-radius: 14px; gap: 8px; color: var(--ink-3); }
   .bs.on { color: var(--ink); }
   .bs__s { display: grid; place-items: center; width: 26px; height: 22px; border-radius: 7px; font-size: 11px; font-weight: 800; background: var(--field); border: 1px solid var(--line-2); }
-  .bs.on .bs__s { background: linear-gradient(180deg, #FF5A2E, #E8380D); color: #fff; border-color: transparent; }
+  .bs.on .bs__s { background: linear-gradient(180deg, var(--acento-2), var(--acento)); color: #fff; border-color: transparent; }
   .ticket { display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; padding: 16px; border-radius: var(--r-xl); min-height: 0; }
   .lineas { overflow: auto; display: grid; align-content: start; gap: 2px; margin: 0 -6px; }
   .ln { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 6px 10px; padding: 10px 6px; border-bottom: 1px solid var(--line); }
@@ -174,7 +174,7 @@
   .ln__tot { grid-column: 2; grid-row: 1 / 3; align-self: center; display: grid; justify-items: end; }
   .ln__tot b { font-weight: 750; }
   .ln__tot small { font-size: 11px; }
-  .ln__t em { font-style: normal; color: var(--rojo-2); font-weight: 600; }
+  .ln__t em { font-style: normal; color: var(--acento-2); font-weight: 600; }
   .bsg { font-size: 15px; font-weight: 650; }
   .tot { display: grid; gap: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
   .gran { display: grid; justify-items: end; margin: 6px 0 8px; }

@@ -1,7 +1,7 @@
 {
   "name": "cumbre",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Cumbre, by Apex Consulting: sistema administrativo para bodegas y pequeños negocios",
   "type": "module",
   "scripts": {
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2.8.0",
+    "@tauri-apps/plugin-dialog": "^2.7.3",
     "sql.js": "^1.14.0"
   },
   "devDependencies": {
