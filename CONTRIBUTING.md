@@ -45,11 +45,8 @@ npm run dev                          # Cumbre en el navegador: http://localhost:
 
 1. Sube la versión en `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` y la insignia de versión del `README.md`.
 2. Arma el instalador (ver el [README](README.md#armar-el-instalador)).
-3. En GitHub, ve a **Releases → Draft a new release** y crea la etiqueta `vX.Y.Z`.
-4. Adjunta el instalador con el nombre **`Cumbre-instalador.exe`**. El botón de descarga del README apunta a ese nombre en la última release. Si el nombre cambia, el enlace se rompe.
-5. Publica la release.
-
-Si GitHub Actions corre en el repositorio, al subir la etiqueta `vX.Y.Z` arma el instalador y deja un borrador de release con `Cumbre-instalador.exe` ya adjunto. En ese caso sólo te queda revisarlo y publicarlo.
+3. Cámbiale el nombre a **`Cumbre-instalador.exe`**.
+4. Súbelo al repositorio del sitio de Apex (`edev-max/apexconsulting`), en la carpeta `descargas/`, reemplazando el anterior. Vercel lo publica solo en `https://www.apexconsultingve.com/descargas/Cumbre-instalador.exe`, que es donde apunta el botón de descarga del README. Si cambias el nombre o la carpeta, el enlace se rompe.
 
 ## Licencia
 

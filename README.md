@@ -3,11 +3,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/edev-max/cumbre/releases/latest/download/Cumbre-instalador.exe"><img src=".github/assets/descargar.svg" alt="Descargar Cumbre para Windows" width="440"></a>
+  <a href="https://www.apexconsultingve.com/descargas/Cumbre-instalador.exe"><img src=".github/assets/descargar.svg" alt="Descargar Cumbre para Windows" width="440"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/edev-max/cumbre/releases/latest"><img alt="Versión 0.3.0" src="https://img.shields.io/badge/versi%C3%B3n-0.3.0-F6F1E8?style=flat-square&labelColor=070B17"></a>
+  <a href="https://www.apexconsultingve.com/descargas/Cumbre-instalador.exe"><img alt="Versión 0.3.0" src="https://img.shields.io/badge/versi%C3%B3n-0.3.0-F6F1E8?style=flat-square&labelColor=070B17"></a>
   <a href="LICENSE"><img alt="Licencia MIT" src="https://img.shields.io/badge/licencia-MIT-F6F1E8?style=flat-square&labelColor=070B17"></a>
   <img alt="Windows 10 y 11" src="https://img.shields.io/badge/Windows-10%20%C2%B7%2011-F6F1E8?style=flat-square&labelColor=070B17">
   <img alt="Hecho con Tauri 2 y Svelte 5" src="https://img.shields.io/badge/Tauri%202-Svelte%205-F6F1E8?style=flat-square&labelColor=070B17">
@@ -57,7 +57,7 @@ Cumbre es el sistema administrativo de tu bodega, abasto o distribuidora. Vendes
 
 ## Instalación
 
-1. **[Descarga el instalador](https://github.com/edev-max/cumbre/releases/latest/download/Cumbre-instalador.exe)** (o busca otra versión en [Releases](https://github.com/edev-max/cumbre/releases)).
+1. **[Descarga el instalador](https://www.apexconsultingve.com/descargas/Cumbre-instalador.exe)** desde apexconsultingve.com.
 2. Ábrelo. El instalador todavía no tiene firma digital, así que Windows puede mostrar *«Windows protegió tu PC»*: toca **Más información → Ejecutar de todas formas**.
 3. Abre Cumbre, escribe el nombre de tu negocio, el RIF, el teléfono y la tasa del día, y empieza a trabajar.
 
@@ -127,9 +127,9 @@ npm run check        # tipos
 |---|---|---|
 | Windows | `npm run tauri build` | `src-tauri/target/release/bundle/nsis/` |
 | Linux o WSL (con `mingw-w64`, `nsis` y el target `x86_64-pc-windows-gnu`) | `npm run instalador` | `instalador/Cumbre-<versión>-instalador.exe` |
-| GitHub Actions | etiqueta `v*` | borrador de release con `Cumbre-instalador.exe` |
+| GitHub Actions | *Run workflow* o etiqueta `v*` | el instalador, en los *Artifacts* de la ejecución |
 
-El botón de descarga de este README apunta a `Cumbre-instalador.exe` de la última release. Los pasos para publicar una versión están en [CONTRIBUTING.md](CONTRIBUTING.md#publicar-una-versión).
+El botón de descarga de este README apunta a `https://www.apexconsultingve.com/descargas/Cumbre-instalador.exe`. Los pasos para publicar una versión están en [CONTRIBUTING.md](CONTRIBUTING.md#publicar-una-versión).
 
 ## Contribuir
 

@@ -1,14 +1,12 @@
-# Arma el instalador de Cumbre para Windows (.exe y .msi) en cada cambio a main
-# y en cada etiqueta vX.Y.Z. El instalador queda en "Artifacts" de la ejecución;
-# con una etiqueta, además se publica un borrador de release con
-# Cumbre-instalador.exe (el nombre fijo al que apunta el botón del README).
+# Arma el instalador de Cumbre para Windows (.exe y .msi) cuando se pide a mano
+# (Actions → Instalador de Windows → Run workflow) o con una etiqueta vX.Y.Z.
+# El instalador queda en "Artifacts" de la ejecución; con una etiqueta, además
+# se publica un borrador de release.
 name: Instalador de Windows
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -48,14 +46,6 @@ jobs:
           tagName: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
           releaseName: 'Cumbre ${{ github.ref_name }}'
           releaseDraft: true
-      - name: Adjuntar Cumbre-instalador.exe a la release
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cp src-tauri/target/release/bundle/nsis/*-setup.exe Cumbre-instalador.exe
-          gh release upload "${{ github.ref_name }}" Cumbre-instalador.exe --clobber
       - uses: actions/upload-artifact@v4
         with:
           name: cumbre-windows
